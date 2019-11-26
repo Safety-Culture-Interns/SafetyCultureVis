@@ -11,7 +11,7 @@ def main():
     templates = create_templates()
     audit_ids = create_audit_ids()
     audits = create_audits(audit_ids)
-
+    print(audits[0])
 
 def get_json(value):
     if value == "audits" or value == "templates":
@@ -52,12 +52,22 @@ def create_audits(audit_ids):
     # for audit in audit_ids:
     for i in range(0, 5):
         data = get_json(audit_ids[i])
+        audit_id = data['audit_id']
         template_id = data['template_id']
         archived = data['archived']
         created_on = data['audit_data']['date_started']
         modified_on = data['audit_data']['date_modified']
-        owner = data['audit_data']['authorship']['owner']
-        aud = Audits.Audit(template_id, archived, created_on, modified_on, owner)
+        score = data['audit_data']['score']
+        total_score = data['audit_data']['total_score']
+        score_percentage = data['audit_data']['score_percentage']
+        audit_name = data['audit_data']['name']
+        duration = data['audit_data']['duration']
+        date_completed = data['audit_data']['date_completed']
+        owner_name = data['audit_data']['authorship']['owner']
+        owner_id = data['audit_data']['authorship']['owner_id']
+        aud = Audits.Audit(audit_id, template_id, archived, created_on, modified_on, score, total_score,
+                           score_percentage,
+                           audit_name, duration, date_completed, owner_name, owner_id)
         audits.append(aud)
     return audits
 
