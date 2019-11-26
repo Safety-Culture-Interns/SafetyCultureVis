@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="69826199-c41e-4249-af5c-6f1fc519f2b5" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/Constructor.py" beforeDir="false" afterPath="$PROJECT_DIR$/Constructor.py" afterDir="false" />
-    </list>
+    <list default="true" id="69826199-c41e-4249-af5c-6f1fc519f2b5" name="Default Changelist" comment="" />
+    <ignored path=".idea/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -11,7 +10,7 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="CoverageDataManager">
-    <SUITE FILE_PATH="coverage/webData$Constructor.coverage" NAME="Constructor Coverage Results" MODIFIED="1574749247797" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/webData$Constructor.coverage" NAME="Constructor Coverage Results" MODIFIED="1574749435068" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/webData$app.coverage" NAME="app Coverage Results" MODIFIED="1574743519813" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
   <component name="FUSProjectUsageTrigger">
@@ -26,10 +25,10 @@
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
-          <entry key="gitignore" value="2" />
+          <entry key="gitignore" value="3" />
           <entry key="html" value="2" />
           <entry key="log" value="2" />
-          <entry key="py" value="9" />
+          <entry key="py" value="10" />
           <entry key="txt" value="2" />
           <entry key="yaml" value="2" />
         </counts>
@@ -37,8 +36,8 @@
       <usages-collector id="statistics.file.types.open">
         <counts>
           <entry key="HTML" value="2" />
-          <entry key="PLAIN_TEXT" value="6" />
-          <entry key="Python" value="9" />
+          <entry key="PLAIN_TEXT" value="7" />
+          <entry key="Python" value="10" />
           <entry key="YAML" value="2" />
         </counts>
       </usages-collector>
@@ -48,7 +47,7 @@
           <entry key="dummy" value="16" />
           <entry key="gitignore" value="71" />
           <entry key="html" value="1" />
-          <entry key="py" value="3134" />
+          <entry key="py" value="3178" />
           <entry key="yaml" value="15" />
         </counts>
       </usages-collector>
@@ -56,7 +55,7 @@
         <counts>
           <entry key="HTML" value="1" />
           <entry key="PLAIN_TEXT" value="87" />
-          <entry key="Python" value="3190" />
+          <entry key="Python" value="3234" />
           <entry key="YAML" value="15" />
         </counts>
       </usages-collector>
@@ -64,16 +63,28 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Constructor.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="292">
-              <caret line="34" column="50" lean-forward="true" selection-start-line="34" selection-start-column="50" selection-end-line="34" selection-end-column="50" />
+            <state relative-caret-position="428">
+              <caret line="49" column="29" lean-forward="true" selection-start-line="49" selection-start-column="29" selection-end-line="49" selection-end-column="29" />
               <folding>
                 <element signature="e#0#15#0" expanded="true" />
-                <marker date="1574749247787" expanded="true" signature="617:752" ph="..." />
-                <marker date="1574749247787" expanded="true" signature="1330:2018" ph="..." />
-                <marker date="1574749247787" expanded="true" signature="1579:2018" ph="..." />
+                <marker date="1574749435061" expanded="true" signature="617:752" ph="..." />
+                <marker date="1574749435061" expanded="true" signature="1330:2053" ph="..." />
+                <marker date="1574749435061" expanded="true" signature="1579:2053" ph="..." />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/audits/Audits.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="272">
+              <caret line="16" selection-start-line="16" selection-end-line="16" />
+              <folding>
+                <marker date="1574741559595" expanded="true" signature="12:13" ph="..." />
               </folding>
             </state>
           </provider>
@@ -87,6 +98,15 @@
               <folding>
                 <marker date="1574738333462" expanded="true" signature="76:82" ph="..." />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/.gitignore">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="119">
+              <caret line="7" column="5" lean-forward="true" selection-start-line="7" selection-start-column="5" selection-end-line="7" selection-end-column="5" />
             </state>
           </provider>
         </entry>
@@ -150,11 +170,6 @@
               <item name="webData" type="b2602c69:ProjectViewProjectNode" />
               <item name="webData" type="462c0819:PsiDirectoryNode" />
             </path>
-            <path>
-              <item name="webData" type="b2602c69:ProjectViewProjectNode" />
-              <item name="webData" type="462c0819:PsiDirectoryNode" />
-              <item name="audits" type="462c0819:PsiDirectoryNode" />
-            </path>
           </expand>
           <select />
         </subPane>
@@ -164,9 +179,10 @@
   <component name="PropertiesComponent">
     <property name="DefaultHtmlFileTemplate" value="HTML File" />
     <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/.idea" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
-    <property name="settings.editor.selected.configurable" value="project.propVCSSupport.Mappings" />
+    <property name="settings.editor.selected.configurable" value="project.propVCSSupport.Ignored.Files" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -260,14 +276,13 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-6" y="0" width="972" height="1046" extended-state="0" />
-    <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.22538294" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.22538294" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.32896176" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.32896176" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -276,7 +291,7 @@
       <window_info anchor="bottom" id="Version Control" order="8" show_stripe_button="false" />
       <window_info anchor="bottom" id="Database Changes" order="9" show_stripe_button="false" />
       <window_info anchor="bottom" id="Event Log" order="10" side_tool="true" />
-      <window_info anchor="bottom" id="Terminal" order="11" weight="0.32786885" />
+      <window_info anchor="bottom" id="Terminal" order="11" visible="true" weight="0.32786885" />
       <window_info anchor="bottom" id="Python Console" order="12" weight="0.32896176" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
@@ -326,10 +341,16 @@
     <entry file="file://$PROJECT_DIR$/style.html">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/.gitignore">
+    <entry file="file://$PROJECT_DIR$/Constructor.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="119">
-          <caret line="7" column="5" selection-start-line="7" selection-start-column="5" selection-end-line="7" selection-end-column="5" />
+        <state relative-caret-position="428">
+          <caret line="49" column="29" lean-forward="true" selection-start-line="49" selection-start-column="29" selection-end-line="49" selection-end-column="29" />
+          <folding>
+            <element signature="e#0#15#0" expanded="true" />
+            <marker date="1574749435061" expanded="true" signature="617:752" ph="..." />
+            <marker date="1574749435061" expanded="true" signature="1330:2053" ph="..." />
+            <marker date="1574749435061" expanded="true" signature="1579:2053" ph="..." />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -353,16 +374,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Constructor.py">
+    <entry file="file://$PROJECT_DIR$/.gitignore">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="292">
-          <caret line="34" column="50" lean-forward="true" selection-start-line="34" selection-start-column="50" selection-end-line="34" selection-end-column="50" />
-          <folding>
-            <element signature="e#0#15#0" expanded="true" />
-            <marker date="1574749247787" expanded="true" signature="617:752" ph="..." />
-            <marker date="1574749247787" expanded="true" signature="1330:2018" ph="..." />
-            <marker date="1574749247787" expanded="true" signature="1579:2018" ph="..." />
-          </folding>
+        <state relative-caret-position="119">
+          <caret line="7" column="5" lean-forward="true" selection-start-line="7" selection-start-column="5" selection-end-line="7" selection-end-column="5" />
         </state>
       </provider>
     </entry>
