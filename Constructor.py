@@ -1,5 +1,6 @@
 import requests
-from audits import Template, Audits
+import json
+from audits import Template, Audits, Item
 
 # URL = "https://api.safetyculture.io"
 URL = "https://sandpit-api.safetyculture.io"
@@ -11,6 +12,7 @@ def main():
     templates = create_templates()
     audit_ids = create_audit_ids()
     audits = create_audits(audit_ids)
+    items = create_items(audit_ids)
     print(audits[0])
 
 def get_json(value):
@@ -71,5 +73,16 @@ def create_audits(audit_ids):
         audits.append(aud)
     return audits
 
+def create_items(audit_ids):
+    items = []
+    json_data = json.dumps(audit_ids)
+    item_dict = json.loads(json_data)
+    for item in item_dict['items']:
+        item_id = (json.dumps(item['item_id']))
+        label = (json.dumps(item['label']))
+        print(label)
+        item_type = (json.dumps(item['type']))
+        items.append(Item(item_id, label, item_type))
+    return items
 
 main()
