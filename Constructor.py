@@ -1,6 +1,7 @@
 import requests
 import json
 from audits import Template, Audits, Item
+import WriteCsv
 
 # URL = "https://api.safetyculture.io" #live site
 URL = "https://sandpit-api.safetyculture.io"  # sand box
@@ -12,6 +13,7 @@ def main():
     templates = create_templates()
     audit_ids = create_audit_ids()
     audits = create_audits(audit_ids)
+    WriteCsv.write_to_csv(audits)
 
 
 def get_json(value):
