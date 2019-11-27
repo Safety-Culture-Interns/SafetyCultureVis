@@ -1,7 +1,7 @@
 class Audit:
     def __init__(self, audit_id, template_id, archived, audit_created_at, audit_modified_at, score, total_score,
                  score_percentage, audit_name, duration, date_completed, owner_name,
-                 owner_id):
+                 owner_id, latitude, longitude):
         self.audit_id = audit_id
         self.template_id = template_id
         self.archived = archived
@@ -15,6 +15,8 @@ class Audit:
         self.date_completed = date_completed
         self.owner_name = owner_name
         self.owner_id = owner_id
+        self.latitude = latitude
+        self.longitude = longitude
 
     # def get_attribute(self, attribute):
     #     return self.__getattribute__(attribute)
@@ -60,6 +62,12 @@ class Audit:
 
     def get_owner(self):
         return self.owner
+
+    def get_longitude(self):
+        return self.longitude
+
+    def get_latitude(self):
+        return self.latitude
 
     def __str__(self):
         return "String for audit ID {}. that is using the template {}. Created by {}".format(self.audit_id, self.template_id, self.audit_name)

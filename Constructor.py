@@ -2,18 +2,17 @@ import requests
 import json
 from audits import Template, Audits, Item
 
-# URL = "https://api.safetyculture.io"
-URL = "https://sandpit-api.safetyculture.io"
-# HEADER = {'Authorization': 'Bearer 9defde6335dd17c61959ae46a7d73a307c0945fbcd435dc649d1d341235e5105'}
-HEADER = {'Authorization': 'Bearer c9b02a45268c522719c457f46bec3a1f6142f1513191fee0204d5603689b80da'}
+# URL = "https://api.safetyculture.io" #live site
+URL = "https://sandpit-api.safetyculture.io"  # sand box
+# HEADER = {'Authorization': 'Bearer 9defde6335dd17c61959ae46a7d73a307c0945fbcd435dc649d1d341235e5105'} # live site
+HEADER = {'Authorization': 'Bearer c9b02a45268c522719c457f46bec3a1f6142f1513191fee0204d5603689b80da'}  # sandbox
 
 
 def main():
     templates = create_templates()
     audit_ids = create_audit_ids()
     audits = create_audits(audit_ids)
-    items = create_items(audit_ids)
-    print(audits[0])
+
 
 def get_json(value):
     if value == "audits" or value == "templates":
@@ -51,8 +50,9 @@ def create_audit_ids():
 
 def create_audits(audit_ids):
     audits = []
+    # items = []
     # for audit in audit_ids:
-    for i in range(0, 5):
+    for i in range(0, 1):
         data = get_json(audit_ids[i])
         audit_id = data['audit_id']
         template_id = data['template_id']
@@ -67,22 +67,43 @@ def create_audits(audit_ids):
         date_completed = data['audit_data']['date_completed']
         owner_name = data['audit_data']['authorship']['owner']
         owner_id = data['audit_data']['authorship']['owner_id']
+        latitude = data['header_items'][6]['responses']['location']['geometry']['coordinates'][0]
+        longitude = data['header_items'][6]['responses']['location']['geometry']['coordinates'][1]
         aud = Audits.Audit(audit_id, template_id, archived, created_on, modified_on, score, total_score,
                            score_percentage,
-                           audit_name, duration, date_completed, owner_name, owner_id)
+                           audit_name, duration, date_completed, owner_name, owner_id, latitude, longitude)
         audits.append(aud)
+        print(latitude)
+        print(longitude)
     return audits
 
-def create_items(audit_ids):
-    items = []
-    json_data = json.dumps(audit_ids)
-    item_dict = json.loads(json_data)
-    for item in item_dict['items']:
-        item_id = (json.dumps(item['item_id']))
-        label = (json.dumps(item['label']))
-        print(label)
-        item_type = (json.dumps(item['type']))
-        items.append(Item(item_id, label, item_type))
-    return items
+
+def create_items(data):
+    item_ids = []
+    item_labels = []
+    item_types = []
+    item_combined_scores = []
+    item_max_scores = []
+    item_parent_ids = []
+    for item in data['items']:
+        item_ids.append((json.dumps(item['item_id'])))
+        item_labels.append((json.dumps(item['label'])))
+        item_types.append((json.dumps(item['type'])))
+        try:
+            item_combined_scores.append((json.dumps(item['scoring']['combined_score'])))
+        except KeyError:
+            item_combined_scores.append(0)
+        try:
+            item_max_scores.append((json.dumps(item['scoring']['combined_max_score'])))
+        except:
+            item_max_scores.append(0)
+        try:
+            item_parent_ids.append((json.dumps(item['parent_id'])))
+        except KeyError:
+            item_parent_ids.append("0")
+    for item_label in item_labels:
+        print(item_label)
+    return 4
+
 
 main()
