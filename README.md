@@ -67,5 +67,5 @@ still in development
 
 ## Credits
 [Matthew Lewandowski](https://www.linkedin.com/in/matthew-lewandowski93/)  
-[Nathan](https://slack.com/intl/en-au/)please update name and address then delete this  
-[Josh](https://slack.com/intl/en-au/)please update name and address then delete this 
+[Nathan Marson](https://www.linkedin.com/in/nathan-marson/)  
+[Joshua Gale](https://www.linkedin.com/in/joshua-j-gale/)

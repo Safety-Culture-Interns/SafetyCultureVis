@@ -69,8 +69,8 @@ def create_audits(audit_ids):
         date_completed = data['audit_data']['date_completed']
         owner_name = data['audit_data']['authorship']['owner']
         owner_id = data['audit_data']['authorship']['owner_id']
-        latitude = data['header_items'][6]['responses']['location']['geometry']['coordinates'][0]
-        longitude = data['header_items'][6]['responses']['location']['geometry']['coordinates'][1]
+        latitude = data['header_items'][6]['responses']['location']['geometry']['coordinates'][1]
+        longitude = data['header_items'][6]['responses']['location']['geometry']['coordinates'][0]
         aud = Audits.Audit(audit_id, template_id, archived, created_on, modified_on, score, total_score,
                            score_percentage,
                            audit_name, duration, date_completed, owner_name, owner_id, latitude, longitude)
