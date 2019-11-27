@@ -5,6 +5,11 @@ from audits.Audits import Audit
 def write_to_csv(audits):
     csv_data = []
 
+    #first line of the csv is titles
+    csv_data.append(["audit_id", "template_id", "archived", "audit_created_at", "audit_modified_at", "score", "total_score",
+                 "score_percentage", "audit_name", "duration", "date_completed", "owner_name", "owner_id", "longitude",
+                 "latitude"])
+
     for i, audit in enumerate(audits):
         csv_data.append([audits[i].get_audit_id(), audits[i].get_template_id(), audits[i].get_archived(),
                         audits[i].get_audit_created_at(), audits[i].get_audit_modified_at(), audits[i].get_score(),

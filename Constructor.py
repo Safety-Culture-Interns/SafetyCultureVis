@@ -54,7 +54,7 @@ def create_audits(audit_ids):
     audits = []
     # items = []
     # for audit in audit_ids:
-    for i in range(0, 1):
+    for i in range(0, 100):
         data = get_json(audit_ids[i])
         audit_id = data['audit_id']
         template_id = data['template_id']
