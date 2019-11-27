@@ -16,10 +16,10 @@ def main():
 
 def get_json(value):
     if value == "audits" or value == "templates":
-        r = requests.get(url="{}/{}/search".format(URL, value), headers=HEADER)
+        request = requests.get(url="{}/{}/search".format(URL, value), headers=HEADER)
     else:
-        r = requests.get(url="{}/{}/{}".format(URL, "audits", value), headers=HEADER)
-    data = r.json()
+        request = requests.get(url="{}/{}/{}".format(URL, "audits", value), headers=HEADER)
+    data = request.json()
     return data
 
 
