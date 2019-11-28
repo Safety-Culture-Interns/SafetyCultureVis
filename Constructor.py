@@ -4,16 +4,19 @@ from audits import Template, Audits, Item
 import WriteCsv
 import MongoDB
 
-# URL = "https://api.safetyculture.io" #live site
-URL = "https://sandpit-api.safetyculture.io"  # sand box
-# HEADER = {'Authorization': 'Bearer 9defde6335dd17c61959ae46a7d73a307c0945fbcd435dc649d1d341235e5105'} # live site
-HEADER = {'Authorization': 'Bearer c9b02a45268c522719c457f46bec3a1f6142f1513191fee0204d5603689b80da'}  # sandbox
+URL = "https://api.safetyculture.io"  # live site
+# URL = "https://sandpit-api.safetyculture.io"  # sand box
+HEADER = {'Authorization': 'Bearer 9defde6335dd17c61959ae46a7d73a307c0945fbcd435dc649d1d341235e5105'}  # live site
+
+
+# HEADER = {'Authorization': 'Bearer c9b02a45268c522719c457f46bec3a1f6142f1513191fee0204d5603689b80da'}  # sandbox
 
 
 def main():
     # templates = create_templates()
-    audit_ids = create_audit_ids()
+    # audit_ids = create_audit_ids() #TODO: create new .py specifically for pulling from API to Database
     # write_audits_to_db(audit_ids)
+    audit_ids = MongoDB.get_all_audit_ids()
     if MongoDB.get_database_length() > MongoDB.get_csv_length():
         audits = create_audits(audit_ids)
         WriteCsv.write_to_csv(audits)
@@ -45,9 +48,10 @@ def create_templates():
 
 
 def create_audit_ids():
-    data = get_json('audits')
+    data = get_json('audits')  # TODO: this needs to key all of the audit ids from the database
     audits = []
-    for number, list in enumerate(data['audits']):
+    blah = MongoDB.get_all_audit_ids()
+    for number, list in enumerate(data['audits']):  # TODO: create a seperate fucntion/script that will update from api
         audit_id = data['audits'][number]['audit_id']
         # if not MongoDB.id_in_database(audit_id): #TODO: this is a very slow way of doing it. Bottle Neck!
         audits.append(audit_id)
@@ -55,7 +59,7 @@ def create_audit_ids():
 
 
 def write_audits_to_db(audit_ids):
-    for i in range(0, 1000):
+    for i in range(0, len(audit_ids)):
         data = get_json(audit_ids[i])
         MongoDB.write_to_mongodb(data)
 
@@ -79,8 +83,18 @@ def create_audits(audit_ids):
         date_completed = data['audit_data']['date_completed']
         owner_name = data['audit_data']['authorship']['owner']
         owner_id = data['audit_data']['authorship']['owner_id']
-        latitude = data['header_items'][6]['responses']['location']['geometry']['coordinates'][1]
-        longitude = data['header_items'][6]['responses']['location']['geometry']['coordinates'][0]
+        try:
+            latitude = data['header_items'][6]['responses']['location']['geometry']['coordinates'][1]
+        except IndexError:
+            latitude = 'none'
+        except KeyError:
+            latitude = 'none'
+        try:
+            longitude = data['header_items'][6]['responses']['location']['geometry']['coordinates'][0]
+        except IndexError:
+            longitude = 'none'
+        except KeyError:
+            longitude = 'none'
         aud = Audits.Audit(audit_id, template_id, archived, created_on, modified_on, score, total_score,
                            score_percentage,
                            audit_name, duration, date_completed, owner_name, owner_id, latitude, longitude)
