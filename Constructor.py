@@ -54,7 +54,7 @@ def create_audits(audit_ids):
     audits = []
     # items = []
     # for audit in audit_ids:
-    for i in range(0, 100):
+    for i in range(0, 2):
         data = get_json(audit_ids[i])
         audit_id = data['audit_id']
         template_id = data['template_id']
@@ -71,9 +71,19 @@ def create_audits(audit_ids):
         owner_id = data['audit_data']['authorship']['owner_id']
         latitude = data['header_items'][6]['responses']['location']['geometry']['coordinates'][1]
         longitude = data['header_items'][6]['responses']['location']['geometry']['coordinates'][0]
+        template_owner = data['template_data']['authorship']['owner']
+        template_author = data['template_data']['authorship']['author']
+        template_description = data['template_data']['metadata']['description']
+        template_name = data['template_data']['metadata']['name']
+        template_owner_id = data['template_data']['authorship']['owner_id']
+        template_author_id = data['template_data']['authorship']['author_id']
+        prepared_by = data['header_items'][5]['responses']['text']
+        location_country = data['header_items'][6]['responses']['location']['country']
         aud = Audits.Audit(audit_id, template_id, archived, created_on, modified_on, score, total_score,
                            score_percentage,
-                           audit_name, duration, date_completed, owner_name, owner_id, latitude, longitude)
+                           audit_name, duration, date_completed, owner_name, owner_id, latitude, longitude,
+                           template_owner, template_author, template_description, template_name, template_owner_id,
+                           template_author_id, prepared_by, location_country)
         audits.append(aud)
         print(latitude)
         print(longitude)
