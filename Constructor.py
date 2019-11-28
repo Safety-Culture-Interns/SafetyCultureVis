@@ -64,26 +64,24 @@ def create_audits(audit_ids):
         score = data['audit_data']['score']
         total_score = data['audit_data']['total_score']
         score_percentage = data['audit_data']['score_percentage']
-        audit_name = data['audit_data']['name']
+        audit_name = remove_special_characters(data['audit_data']['name'])
         duration = data['audit_data']['duration']
         date_completed = data['audit_data']['date_completed']
-        owner_name = data['audit_data']['authorship']['owner']
+        owner_name = remove_special_characters(data['audit_data']['authorship']['owner'])
         owner_id = data['audit_data']['authorship']['owner_id']
         latitude = data['header_items'][6]['responses']['location']['geometry']['coordinates'][1]
         longitude = data['header_items'][6]['responses']['location']['geometry']['coordinates'][0]
-        template_owner = data['template_data']['authorship']['owner']
-        template_author = data['template_data']['authorship']['author']
-        template_description = data['template_data']['metadata']['description']
-        template_name = data['template_data']['metadata']['name']
+        template_owner = remove_special_characters(data['template_data']['authorship']['owner'])
+        template_author = remove_special_characters(data['template_data']['authorship']['author'])
+        template_description = remove_special_characters(data['template_data']['metadata']['description'])
+        template_name = remove_special_characters(data['template_data']['metadata']['name'])
         template_owner_id = data['template_data']['authorship']['owner_id']
         template_author_id = data['template_data']['authorship']['author_id']
-        prepared_by = data['header_items'][5]['responses']['text']
-        location_country = data['header_items'][6]['responses']['location']['country']
         aud = Audits.Audit(audit_id, template_id, archived, created_on, modified_on, score, total_score,
                            score_percentage,
                            audit_name, duration, date_completed, owner_name, owner_id, latitude, longitude,
                            template_owner, template_author, template_description, template_name, template_owner_id,
-                           template_author_id, prepared_by, location_country)
+                           template_author_id)
         audits.append(aud)
         print(latitude)
         print(longitude)
@@ -116,6 +114,10 @@ def create_items(data):
     for item_label in item_labels:
         print(item_label)
     return 4
+
+
+def remove_special_characters(text):
+    return ''.join(e for e in text if e.isascii())
 
 
 main()

@@ -11,7 +11,7 @@ def write_to_csv(audits):
                  "audit_modified_at_date", "audit_modified_at_time", "score", "total_score", "score_percentage",
                  "audit_name", "duration", "date_completed_date", "date_completed_time", "owner_name", "owner_id",
                  "longitude", "latitude", "template_owner", "template_author", "template_description", "template_name",
-                 "template_owner_id", "template_author_id", "prepared_by", "location_country"]]
+                 "template_owner_id", "template_author_id"]]
 
     # first line of the csv is titles
 
@@ -28,8 +28,7 @@ def write_to_csv(audits):
                          audits[i].get_owner_name(), audits[i].get_owner_id(), audits[i].get_longitude(),
                          audits[i].get_latitude(), audits[i].get_template_owner(), audits[i].get_template_author(),
                          audits[i].get_template_description(), audits[i].get_template_name(),
-                         audits[i].get_template_owner_id(), audits[i].get_template_author_id(),
-                         audits[i].get_prepared_by(), audits[i].get_location_country()])
+                         audits[i].get_template_owner_id(), audits[i].get_template_author_id()])
 
     with open('data.csv', 'w', newline='') as csvFile:
         writer = csv.writer(csvFile)
