@@ -2,6 +2,7 @@ import requests
 import json
 from audits import Template, Audits, Item
 import WriteCsv
+import MongoDB
 
 # URL = "https://api.safetyculture.io" #live site
 URL = "https://sandpit-api.safetyculture.io"  # sand box
@@ -10,10 +11,12 @@ HEADER = {'Authorization': 'Bearer c9b02a45268c522719c457f46bec3a1f6142f1513191f
 
 
 def main():
-    templates = create_templates()
+    # templates = create_templates()
     audit_ids = create_audit_ids()
-    audits = create_audits(audit_ids)
-    WriteCsv.write_to_csv(audits)
+    # write_audits_to_db(audit_ids)
+    if MongoDB.get_database_length() > MongoDB.get_csv_length():
+        audits = create_audits(audit_ids)
+        WriteCsv.write_to_csv(audits)
 
 
 def get_json(value):
@@ -46,16 +49,23 @@ def create_audit_ids():
     audits = []
     for number, list in enumerate(data['audits']):
         audit_id = data['audits'][number]['audit_id']
+        # if not MongoDB.id_in_database(audit_id): #TODO: this is a very slow way of doing it. Bottle Neck!
         audits.append(audit_id)
     return audits
 
 
+def write_audits_to_db(audit_ids):
+    for i in range(0, 1000):
+        data = get_json(audit_ids[i])
+        MongoDB.write_to_mongodb(data)
+
+
 def create_audits(audit_ids):
     audits = []
-    # items = []
-    # for audit in audit_ids:
-    for i in range(0, 100):
-        data = get_json(audit_ids[i])
+    for i in range(0, MongoDB.get_database_length()):
+        print(i)
+        # data = get_json(audit_ids[i])
+        data = MongoDB.get_all_from_db(audit_ids[i])
         audit_id = data['audit_id']
         template_id = data['template_id']
         archived = data['archived']
@@ -75,8 +85,6 @@ def create_audits(audit_ids):
                            score_percentage,
                            audit_name, duration, date_completed, owner_name, owner_id, latitude, longitude)
         audits.append(aud)
-        print(latitude)
-        print(longitude)
     return audits
 
 
