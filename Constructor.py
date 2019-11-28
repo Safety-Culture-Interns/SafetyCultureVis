@@ -81,20 +81,23 @@ def create_audits(audit_ids):
         audit_name = data['audit_data']['name']
         duration = data['audit_data']['duration']
         date_completed = data['audit_data']['date_completed']
-        owner_name = data['audit_data']['authorship']['owner']
+        owner_name = data['audit_data']['authorship']['owner']  # TODO: check names for illegal characters
         owner_id = data['audit_data']['authorship']['owner_id']
-        try:
-            latitude = data['header_items'][6]['responses']['location']['geometry']['coordinates'][1]
-        except IndexError:
-            latitude = 'none'
-        except KeyError:
-            latitude = 'none'
-        try:
-            longitude = data['header_items'][6]['responses']['location']['geometry']['coordinates'][0]
-        except IndexError:
-            longitude = 'none'
-        except KeyError:
-            longitude = 'none'
+        working = False
+        count = 0
+        while not working:
+            try:
+                latitude = data['header_items'][count]['responses']['location']['geometry']['coordinates'][1]
+                longitude = data['header_items'][count]['responses']['location']['geometry']['coordinates'][0]
+                working = True
+            except IndexError:
+                count += 1
+            except KeyError:
+                count += 1
+            if count == 8:
+                working = True
+                latitude = "none"
+                longitude = "none"
         aud = Audits.Audit(audit_id, template_id, archived, created_on, modified_on, score, total_score,
                            score_percentage,
                            audit_name, duration, date_completed, owner_name, owner_id, latitude, longitude)
