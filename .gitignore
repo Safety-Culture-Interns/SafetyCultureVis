@@ -11,7 +11,8 @@ idea*
 .idea/**/usage.statistics.xml
 .idea/**/dictionaries
 .idea/**/shelf
+.DS_Store
+
 __pychache__/
 data.csv
 secrets.py
-
