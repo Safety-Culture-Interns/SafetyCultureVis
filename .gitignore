@@ -12,4 +12,4 @@ idea*
 .idea/**/dictionaries
 .idea/**/shelf
 audits/__pychache__/*
-
+.DS_Store

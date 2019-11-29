@@ -6,12 +6,15 @@ import pandas as pd
 from dash.dependencies import Input, Output
 import plotly.graph_objects as go
 from datetime import datetime as dt
+import string
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
-# df = pd.read_csv('test.csv')
+df = pd.read_csv('data.csv')
 
-df = pd.read_csv('https://raw.githubusercontent.com/matthew-lewandowski/SafetyCultureVis/audit/data.csv')
+# df = pd.read_csv('https://raw.githubusercontent.com/matthew-lewandowski/SafetyCultureVis/audit/data.csv')
+
+values = list(df.columns.values)
 
 scl = [0, "rgb(150,0,90)"], [0.125, "rgb(0, 0, 200)"], [0.25, "rgb(0, 25, 255)"], \
       [0.375, "rgb(0, 152, 255)"], [0.5, "rgb(44, 255, 150)"], [0.625, "rgb(151, 255, 0)"], \
@@ -24,22 +27,35 @@ colours = {
     'text': '#fff'
 }
 
+
+def update_string(attribute):
+    return string.capwords(' '.join(attribute.split('_')), ' ')
+
+
 app.layout = html.Div([
     dcc.Tabs(id="tabs", value='map-tab', children=[
         dcc.Tab(label='Map Tab', value='map-tab', children=[
-            html.H3('Tab content 1'),
-            dcc.DatePickerRange(
-                id='date-picker-range',
-                # start_date_placeholder_text='Select Start date',
-                # end_date_placeholder_text='Select End date'
-                start_date=dt(2017, 12, 25),
-                end_date=dt(2018, 2, 1)
-            ),
+            html.H3('Map'),
+            html.Div(children=[
+                dcc.DatePickerRange(
+                    id='date-picker-range',
+                    # start_date_placeholder_text='Select Start date',
+                    # end_date_placeholder_text='Select End date'
+                    start_date=dt(2017, 12, 25),
+                    end_date=dt(2018, 2, 1)
+                )], style={'width': '25%', 'display': 'inline-block'}),
+            html.Div(children=[
+                dcc.Dropdown(options=[
+                    {'label': 'Audit Created', 'value': 'audit_created_at'},
+                    {'label': 'Audit Modified', 'value': 'audit_modified_at'},
+                    {'label': 'Date Completed', 'value': 'date_completed'}
+                ], value='audit_created_at',
+                    id='date-sort')], style={'width': '25%', 'display': 'inline-block'}),
             dcc.Graph(
                 id='map'
             )]),
         dcc.Tab(label='Graph Tab', value='graph-tab', children=[
-            html.H3('Tab content 2'),
+            html.H3('Graph'),
             html.Div(children=[
                 html.Label('Graph Type'),
                 dcc.Dropdown(
@@ -55,8 +71,7 @@ app.layout = html.Div([
                 html.Label('X Axis'),
                 dcc.Dropdown(
                     options=[
-                        {'label': 'Score', 'value': 'score'},
-                        {'label': '', 'value': ''}
+                        {'label': update_string(i), 'value': i} for i in values
                     ],
                     value='score',
                     id='xaxis'
@@ -65,10 +80,9 @@ app.layout = html.Div([
                 html.Label('Y Axis'),
                 dcc.Dropdown(
                     options=[
-                        {'label': 'Score Percentage', 'value': 'percent'},
-                        {'label': '', 'value': ''}
+                        {'label': update_string(i), 'value': i} for i in values
                     ],
-                    value='percent',
+                    value='score_percentage',
                     id='yaxis'
                 )], style={'width': '25%', 'display': 'inline-block'}),
             html.Div(children=[
@@ -84,14 +98,15 @@ app.layout = html.Div([
 
 @app.callback(Output('map', 'figure'),
               [Input('date-picker-range', 'start_date'),
-               Input('date-picker-range', 'end_date')])
-def select_date(start_date, end_date):
-    df['audit_created_at'] = pd.to_datetime(df['audit_created_at'])
-    mask = df['audit_created_at'].between(start_date, end_date)
+               Input('date-picker-range', 'end_date'),
+               Input('date-sort', 'value')])
+def select_date(start_date, end_date, sorting_method):
+    df[sorting_method] = pd.to_datetime(df[sorting_method])
+    mask = df[sorting_method].between(start_date, end_date)
     print(mask)
     trace = go.Scattergeo(
         lat=df['latitude'].get(mask),
-        lon=df['longitude'].get(mask), 
+        lon=df['longitude'].get(mask),
         text=df['score_percentage'].astype(str) + ' percent',
         marker=dict(
             color=df['score_percentage'],
@@ -109,8 +124,6 @@ def select_date(start_date, end_date):
             )
         ))
     return {'data': [trace], 'layout': go.Layout(geo=dict(
-        # height=500,
-        # width=1000,
         scope='world',
         showland=True,
         landcolor="rgb(212, 212, 212)",
@@ -140,15 +153,17 @@ def select_date(start_date, end_date):
 
 
 @app.callback(
-    dash.dependencies.Output("chart", "figure"),
-    [dash.dependencies.Input("graph-type", "value")]
+    Output('chart', 'figure'),
+    [Input('graph-type', 'value'),
+     Input('xaxis', 'value'),
+     Input('yaxis', 'value')]
 )
-def update_figure(graph_type):
+def update_figure(graph_type, x_value, y_value):
     if graph_type == 'scatter':
         traces = [dict(
-            x=df['duration'],
-            y=df['score_percentage'],
-            text=['score_percentage'],
+            x=df[x_value],
+            y=df[y_value],
+            # text=['score_percentage'],
             mode='markers',
             opacity=0.7,
             marker={
@@ -164,16 +179,16 @@ def update_figure(graph_type):
             )
         }
     elif graph_type == 'line':
-        trace = [go.Scatter(x=df['audit_created_at'], y=df['score_percentage'], mode='lines',
+        trace = [go.Scatter(x=df[x_value], y=df[y_value], mode='lines',
                             marker={'size': 8, "opacity": 0.6, "line": {'width': 0.5}}, )]
         return {"data": trace,
                 "layout": go.Layout(title="Line Graph",
                                     colorway=['#fdae61', '#abd9e9', '#2c7bb6'],
                                     yaxis={"title": ""}, xaxis={"title": ""})}
     elif graph_type == 'bar':
-        trace = go.Bar(x=df['template_id'], y=df['score'])
+        trace = go.Bar(x=df[x_value], y=df[y_value], name='')
         return {
-            'data': trace,
+            'data': [trace],
             'layout': go.Layout(title='Bar Graph',
                                 colorway=["#EF963B", "#EF533B"], hovermode="closest",
                                 xaxis={'title': "", 'titlefont': {'color': 'black', 'size': 14},
