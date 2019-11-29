@@ -1,14 +1,13 @@
 import requests
 import json
-from audits import Template, Audits, Item
+from audits import Template, Audits
 import WriteCsv
 import MongoDB
+import APISync
 
 URL = "https://api.safetyculture.io"  # live site
 # URL = "https://sandpit-api.safetyculture.io"  # sand box
 HEADER = {'Authorization': 'Bearer 9defde6335dd17c61959ae46a7d73a307c0945fbcd435dc649d1d341235e5105'}  # live site
-
-
 # HEADER = {'Authorization': 'Bearer c9b02a45268c522719c457f46bec3a1f6142f1513191fee0204d5603689b80da'}  # sandbox
 
 
@@ -68,83 +67,42 @@ def create_audits(audit_ids):
     audits = []
     for i in range(0, MongoDB.get_database_length()):
         print(i)
-        # data = get_json(audit_ids[i])
         data = MongoDB.get_all_from_db(audit_ids[i])
         audit_id = data['audit_id']
-
-        audit_name = remove_special_characters(data['audit_data']['name'])
-        owner_name = remove_special_characters(data['audit_data']['authorship']['owner'])
-        template_owner = remove_special_characters(data['template_data']['authorship']['owner'])
-        template_author = remove_special_characters(data['template_data']['authorship']['author'])
-        template_description = remove_special_characters(data['template_data']['metadata']['description'])
-        template_name = remove_special_characters(data['template_data']['metadata']['name'])
-
         template_id = MongoDB.get_audit_information(audit_id, 'template_id')
-        archived = MongoDB.get_audit_information(audit_id, 'archived')
-        created_on = MongoDB.get_audit_information(audit_id, ['audit_data', 'date_started'])
-        modified_on = MongoDB.get_audit_information(audit_id, ['audit_data', 'date_modified'])
-        score = MongoDB.get_audit_information(audit_id, ['audit_data', 'score'])
-        total_score = MongoDB.get_audit_information(audit_id, ['audit_data', 'total_score'])
-        score_percentage = MongoDB.get_audit_information(audit_id, ['audit_data', 'score_percentage'])
-        audit_name = MongoDB.get_audit_information(audit_id, ['audit_data', 'name'])
-        duration = MongoDB.get_audit_information(audit_id, ['audit_data', 'duration'])
-        date_completed = MongoDB.get_audit_information(audit_id, ['audit_data', 'date_completed'])
-        owner_name = MongoDB.get_audit_information(audit_id, ['audit_data', 'authorship', 'owner'])
-        owner_id = MongoDB.get_audit_information(audit_id, ['audit_data', 'authorship', 'owner_id'])
-        latitude = MongoDB.get_audit_information(audit_id, ['header_items', 'responses', 'location', 'geometry',
-                                                            'coordinates'])[0]
-        longitude = MongoDB.get_audit_information(audit_id, ['header_items', 'responses', 'location', 'geometry',
-                                                             'coordinates'])[1]
-        # working = False
-        # count = 0
-        # while not working:
-        #     try:
-        #         latitude = data['header_items'][count]['responses']['location']['geometry']['coordinates'][1]
-        #         longitude = data['header_items'][count]['responses']['location']['geometry']['coordinates'][0]
-        #         working = True
-        #     except IndexError:
-        #         count += 1
-        #     except KeyError:
-        #         count += 1
-        #     if count == 8:
-        #         working = True
-        #         latitude = "none"
-        #         longitude = "none"
-        aud = Audits.Audit(audit_id, template_id, archived, created_on, modified_on, score, total_score,
+        template_data = MongoDB.get_audit_information(audit_id, 'template_data')
+        audit_data = MongoDB.get_audit_information(audit_id, 'audit_data')
+        template_owner = remove_special_characters(template_data['authorship']['owner'])
+        template_author = remove_special_characters(template_data['authorship']['author'])
+        template_description = remove_special_characters(template_data['metadata']['description'])
+        template_name = remove_special_characters(template_data['metadata']['name'])
+        template_author_id = template_data['authorship']['author_id']
+        template_owner_id = template_data['authorship']['owner_id']
+        created_on = audit_data['date_started']
+        modified_on = audit_data['date_modified']
+        score = audit_data['score']
+        total_score = audit_data['total_score']
+        score_percentage = audit_data['score_percentage']
+        audit_name = remove_special_characters(audit_data['name'])
+        duration = audit_data['duration']
+        date_completed = audit_data['date_completed']
+        owner_name = remove_special_characters(audit_data['authorship']['owner'])
+        owner_id = audit_data['authorship']['owner_id']
+        try:
+            coordinates = MongoDB.get_audit_information(audit_id, ['header_items', 'responses', 'location', 'geometry',
+                                                                   'coordinates'])
+            latitude = coordinates[0]
+            longitude = coordinates[1]
+        except IndexError:
+            latitude = 'none'
+            longitude = 'none'
+        aud = Audits.Audit(audit_id, template_id, created_on, modified_on, score, total_score,
                            score_percentage,
                            audit_name, duration, date_completed, owner_name, owner_id, latitude, longitude,
                            template_owner, template_author, template_description, template_name, template_owner_id,
                            template_author_id)
         audits.append(aud)
     return audits
-
-
-def create_items(data):
-    item_ids = []
-    item_labels = []
-    item_types = []
-    item_combined_scores = []
-    item_max_scores = []
-    item_parent_ids = []
-    for item in data['items']:
-        item_ids.append((json.dumps(item['item_id'])))
-        item_labels.append((json.dumps(item['label'])))
-        item_types.append((json.dumps(item['type'])))
-        try:
-            item_combined_scores.append((json.dumps(item['scoring']['combined_score'])))
-        except KeyError:
-            item_combined_scores.append(0)
-        try:
-            item_max_scores.append((json.dumps(item['scoring']['combined_max_score'])))
-        except:
-            item_max_scores.append(0)
-        try:
-            item_parent_ids.append((json.dumps(item['parent_id'])))
-        except KeyError:
-            item_parent_ids.append("0")
-    for item_label in item_labels:
-        print(item_label)
-    return 4
 
 
 def remove_special_characters(text):

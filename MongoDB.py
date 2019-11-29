@@ -1,7 +1,9 @@
 import pymongo
 import csv
+import secrets
 
-MONGOSTRING = "mongodb+srv://matt-lewandowski:Postclip18@cluster0-tjdbw.mongodb.net/test?retryWrites=true&w=majority"
+MONGOSTRING = "mongodb+srv://{}:{}@cluster0-tjdbw.mongodb.net/test?retryWrites=true&w=majority".format(
+    secrets.get_database_user(), secrets.get_database_password())
 COLLECTION_NAME = 'audits'
 DATABASE_NAME = 'iauditor'
 mango_client = pymongo.MongoClient(MONGOSTRING)
@@ -69,8 +71,7 @@ def get_all_audit_ids():
 
 
 def get_audit_information(audit_id, x):
-    # TODO: takes in find information and querys the database for specific information and not entire audit.
-    if len(x) == 1:
+    if isinstance(x, str):
         audit = db_collection.distinct(x, {'audit_id': audit_id})
         return audit[0]
     elif len(x) == 2:

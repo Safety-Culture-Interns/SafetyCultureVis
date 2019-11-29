@@ -11,5 +11,7 @@ idea*
 .idea/**/usage.statistics.xml
 .idea/**/dictionaries
 .idea/**/shelf
-audits/__pychache__/*
+__pychache__/
+data.csv
+secrets.py
 

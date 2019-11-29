@@ -1,11 +1,10 @@
 class Audit:
-    def __init__(self, audit_id, template_id, archived, audit_created_at, audit_modified_at, score, total_score,
+    def __init__(self, audit_id, template_id, audit_created_at, audit_modified_at, score, total_score,
                  score_percentage, audit_name, duration, date_completed, owner_name,
                  owner_id, latitude, longitude, template_owner, template_author, template_description, template_name,
                  template_owner_id, template_author_id):
         self.audit_id = audit_id
         self.template_id = template_id
-        self.archived = archived
         self.audit_created_at = audit_created_at
         self.audit_modified_at = audit_modified_at
         self.score = score
@@ -33,9 +32,6 @@ class Audit:
 
     def get_template_id(self):
         return self.template_id
-
-    def get_archived(self):
-        return self.archived
 
     def get_audit_created_at(self):
         return self.audit_created_at

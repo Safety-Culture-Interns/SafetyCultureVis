@@ -7,7 +7,7 @@ LONG_MONTHS = [1, 3, 5, 7, 8, 10, 12]
 
 
 def write_to_csv(audits):
-    csv_data = [["audit_id", "template_id", "archived", "audit_created_at_date", "audit_created_at_time",
+    csv_data = [["audit_id", "template_id", "audit_created_at_date", "audit_created_at_time",
                  "audit_modified_at_date", "audit_modified_at_time", "score", "total_score", "score_percentage",
                  "audit_name", "duration", "date_completed_date", "date_completed_time", "owner_name", "owner_id",
                  "longitude", "latitude", "template_owner", "template_author", "template_description", "template_name",
@@ -16,15 +16,16 @@ def write_to_csv(audits):
     # first line of the csv is titles
 
     for i, audit in enumerate(audits):
-
         audit_created_at = generate_date("2000-01-01T00:00:00.000Z")
         audit_modified_at = generate_date(audit_created_at)
         date_completed = generate_completed_datetime(audit_modified_at, audits[i].get_duration())
 
-        csv_data.append([audits[i].get_audit_id(), audits[i].get_template_id(), audits[i].get_archived(),
-                         audit_created_at[:10], audit_created_at[11:-5], audit_modified_at[:10], audit_modified_at[11:-5],
+        csv_data.append([audits[i].get_audit_id(), audits[i].get_template_id(),
+                         audit_created_at[:10], audit_created_at[11:-5], audit_modified_at[:10],
+                         audit_modified_at[11:-5],
                          audits[i].get_score(), audits[i].get_total_score(), audits[i].get_score_percentage(),
-                         audits[i].get_audit_name(), audits[i].get_duration(), date_completed[:10], date_completed[11:-5],
+                         audits[i].get_audit_name(), audits[i].get_duration(), date_completed[:10],
+                         date_completed[11:-5],
                          audits[i].get_owner_name(), audits[i].get_owner_id(), audits[i].get_longitude(),
                          audits[i].get_latitude(), audits[i].get_template_owner(), audits[i].get_template_author(),
                          audits[i].get_template_description(), audits[i].get_template_name(),
