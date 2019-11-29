@@ -71,6 +71,14 @@ def create_audits(audit_ids):
         # data = get_json(audit_ids[i])
         data = MongoDB.get_all_from_db(audit_ids[i])
         audit_id = data['audit_id']
+
+        audit_name = remove_special_characters(data['audit_data']['name'])
+        owner_name = remove_special_characters(data['audit_data']['authorship']['owner'])
+        template_owner = remove_special_characters(data['template_data']['authorship']['owner'])
+        template_author = remove_special_characters(data['template_data']['authorship']['author'])
+        template_description = remove_special_characters(data['template_data']['metadata']['description'])
+        template_name = remove_special_characters(data['template_data']['metadata']['name'])
+
         template_id = MongoDB.get_audit_information(audit_id, 'template_id')
         archived = MongoDB.get_audit_information(audit_id, 'archived')
         created_on = MongoDB.get_audit_information(audit_id, ['audit_data', 'date_started'])
@@ -104,7 +112,9 @@ def create_audits(audit_ids):
         #         longitude = "none"
         aud = Audits.Audit(audit_id, template_id, archived, created_on, modified_on, score, total_score,
                            score_percentage,
-                           audit_name, duration, date_completed, owner_name, owner_id, latitude, longitude)
+                           audit_name, duration, date_completed, owner_name, owner_id, latitude, longitude,
+                           template_owner, template_author, template_description, template_name, template_owner_id,
+                           template_author_id)
         audits.append(aud)
     return audits
 
@@ -135,6 +145,10 @@ def create_items(data):
     for item_label in item_labels:
         print(item_label)
     return 4
+
+
+def remove_special_characters(text):
+    return ''.join(e for e in text if e.isascii())
 
 
 main()
