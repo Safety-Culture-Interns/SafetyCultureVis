@@ -54,19 +54,22 @@ def get_api_audit_ids_mod_dates():
 
 
 # gets json from iauditor api and writes it to mongodb
+# if there are at least 10 audits left, it will bulk request and upload them
 def write_audits_to_db(audit_ids):
-    for i in range(0, len(audit_ids), 10):
-        if (len(audit_ids) - i) >= 10:
+    count = 0
+    while (len(audit_ids) - count) != 0:
+        if (len(audit_ids) - count) >= 10:
             ten_ids = []
             for x in range(0, 10):
-                ten_ids.append(audit_ids[i + x])  # TODO: find a better way to iterate by 10, and add 10 ids to a list
+                ten_ids.append(audit_ids[count + x])
+            count += 10
             batch_write_to_db(ten_ids)
-            print("batched 10")
-            print(i)
+            print("{} uploaded to Mongodb".format(count))
         else:
-            item = get_json(audit_ids[i])
+            item = get_json(audit_ids[count])
             MongoDB.write_one_to_mongodb(item)
-            print("batched 1")
+            count += 1
+            print("{} uploaded to Mongodb".format(count))
 
 
 def batch_write_to_db(ids):

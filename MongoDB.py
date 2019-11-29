@@ -3,8 +3,8 @@ import secrets
 
 MONGOSTRING = "mongodb+srv://{}:{}@cluster0-tjdbw.mongodb.net/test?retryWrites=true&w=majority".format(
     secrets.get_database_user(), secrets.get_database_password())
-COLLECTION_NAME = 'audits01'
-DATABASE_NAME = 'iauditor01'
+COLLECTION_NAME = 'audits'
+DATABASE_NAME = 'iauditor'
 mango_client = pymongo.MongoClient(MONGOSTRING)
 my_database = mango_client[DATABASE_NAME]
 db_collection = my_database[COLLECTION_NAME]

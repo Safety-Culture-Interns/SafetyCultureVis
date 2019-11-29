@@ -6,8 +6,8 @@ import csv
 
 
 def main():
-    audit_ids = MongoDB.get_all('audit_id')
     APISync.sync_with_api()
+    audit_ids = MongoDB.get_all('audit_id')
     if MongoDB.get_database_length() > get_csv_length():
         audits = create_audits(audit_ids)
         WriteCsv.write_to_csv(audits)
