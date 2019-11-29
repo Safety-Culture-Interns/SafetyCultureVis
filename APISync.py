@@ -1,11 +1,58 @@
 import requests
-import json
 import MongoDB
 import secrets
 
 URL = "https://api.safetyculture.io"  # live site
-# URL = "https://sandpit-api.safetyculture.io"  # sand box
 HEADER = {'Authorization': 'Bearer {}'.format(secrets.get_token())}  # live site
 
+
 def sync_with_api():
-    pass
+    mongo_audit_ids = MongoDB.get_all('audit_id')
+    mongo_audit_dates = MongoDB.get_all('modified_at')
+    api_audits = get_api_audit_ids_mod_dates()[0]
+    api_audit_dates = get_api_audit_ids_mod_dates()[1]
+    new_ids = compare_api_database(mongo_audit_ids, api_audits, mongo_audit_dates, api_audit_dates)
+    write_audits_to_db(new_ids)
+
+
+# loops through the ids from the api, and removes any from list if they are also in the mongo ids
+def compare_api_database(mongo_ids, api_ids, mongo_dates, api_dates):
+    list = []
+    for id in api_ids:
+        if id in mongo_ids:
+            continue
+        else:
+            list.append(id)
+    print("{} items are going to be added to the database".format(len(list)))
+    return list
+
+
+# returns a dict from the api
+def get_json(value):
+    if value == "audits" or value == "templates":
+        request = requests.get(url="{}/{}/search".format(URL, value), headers=HEADER)
+    else:
+        request = requests.get(url="{}/{}/{}".format(URL, "audits", value), headers=HEADER)
+    data = request.json()
+    return data
+
+
+# returns a list of audit ids[0], and modified dates[1]
+def get_api_audit_ids_mod_dates():
+    audits_and_mod_dates = []
+    audit_ids = []
+    audit_mods = []
+    audit_data = get_json('audits')
+    for i in range(0, len(audit_data['audits'])):
+        audit_ids.append(audit_data['audits'][i]['audit_id'])
+        audit_mods.append(audit_data['audits'][i]['modified_at'])
+    audits_and_mod_dates.append(audit_ids)
+    audits_and_mod_dates.append(audit_mods)
+    return audits_and_mod_dates
+
+
+def write_audits_to_db(audit_ids):
+    for i in range(0, len(audit_ids)):
+        data = get_json(audit_ids[i])
+        MongoDB.write_to_mongodb(data)
+        print("{} audit added to database".format(i))
