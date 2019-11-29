@@ -4,16 +4,8 @@ import MongoDB
 import APISync
 import csv
 
-URL = "https://api.safetyculture.io"  # live site
-# URL = "https://sandpit-api.safetyculture.io"  # sand box
-HEADER = {'Authorization': 'Bearer 9defde6335dd17c61959ae46a7d73a307c0945fbcd435dc649d1d341235e5105'}  # live site
-
-
-# HEADER = {'Authorization': 'Bearer c9b02a45268c522719c457f46bec3a1f6142f1513191fee0204d5603689b80da'}  # sandbox
-
 
 def main():
-    # write_audits_to_db(audit_ids)
     audit_ids = MongoDB.get_all('audit_id')
     APISync.sync_with_api()
     if MongoDB.get_database_length() > get_csv_length():

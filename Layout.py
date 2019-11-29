@@ -46,10 +46,10 @@ app.layout = html.Div([
                 )], style={'width': '25%', 'display': 'inline-block'}),
             html.Div(children=[
                 dcc.Dropdown(options=[
-                    {'label': 'Audit Created', 'value': 'audit_created_at'},
-                    {'label': 'Audit Modified', 'value': 'audit_modified_at'},
-                    {'label': 'Date Completed', 'value': 'date_completed'}
-                ], value='audit_created_at',
+                    {'label': 'Audit Created', 'value': 'audit_created_at_date'},
+                    {'label': 'Audit Modified', 'value': 'audit_modified_at_date'},
+                    {'label': 'Date Completed', 'value': 'date_completed_date'}
+                ], value='audit_created_at_date',
                     id='date-sort')], style={'width': '25%', 'display': 'inline-block'}),
             dcc.Graph(
                 id='map'

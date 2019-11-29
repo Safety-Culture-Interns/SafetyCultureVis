@@ -1,11 +1,13 @@
 import requests
 import MongoDB
 import secrets
+import json
 
 URL = "https://api.safetyculture.io"  # live site
-HEADER = {'Authorization': 'Bearer {}'.format(secrets.get_token())}  # live site
+HEADER = {'Authorization': 'Bearer {}'.format(secrets.get_token()), 'Content-Type': 'application/json'}  # live site
 
 
+# syncs the mongodb with the api, adding only the new audits
 def sync_with_api():
     mongo_audit_ids = MongoDB.get_all('audit_id')
     mongo_audit_dates = MongoDB.get_all('modified_at')
@@ -19,7 +21,7 @@ def sync_with_api():
 def compare_api_database(mongo_ids, api_ids, mongo_dates, api_dates):
     list = []
     for id in api_ids:
-        if id in mongo_ids:
+        if id in mongo_ids:  # TODO: also check modification date
             continue
         else:
             list.append(id)
@@ -51,8 +53,38 @@ def get_api_audit_ids_mod_dates():
     return audits_and_mod_dates
 
 
+# gets json from iauditor api and writes it to mongodb
 def write_audits_to_db(audit_ids):
-    for i in range(0, len(audit_ids)):
-        data = get_json(audit_ids[i])
-        MongoDB.write_to_mongodb(data)
-        print("{} audit added to database".format(i))
+    for i in range(0, len(audit_ids), 10):
+        if (len(audit_ids) - i) >= 10:
+            ten_ids = []
+            for x in range(0, 10):
+                ten_ids.append(audit_ids[i + x])  # TODO: find a better way to iterate by 10, and add 10 ids to a list
+            batch_write_to_db(ten_ids)
+            print("batched 10")
+            print(i)
+        else:
+            item = get_json(audit_ids[i])
+            MongoDB.write_one_to_mongodb(item)
+            print("batched 1")
+
+
+def batch_write_to_db(ids):
+    batch = {
+        'requests': [
+            {"method": "get", "path": "/audits/{}".format(ids[0])},
+            {"method": "get", "path": "/audits/{}".format(ids[1])},
+            {"method": "get", "path": "/audits/{}".format(ids[2])},
+            {"method": "get", "path": "/audits/{}".format(ids[3])},
+            {"method": "get", "path": "/audits/{}".format(ids[4])},
+            {"method": "get", "path": "/audits/{}".format(ids[5])},
+            {"method": "get", "path": "/audits/{}".format(ids[6])},
+            {"method": "get", "path": "/audits/{}".format(ids[7])},
+            {"method": "get", "path": "/audits/{}".format(ids[8])},
+            {"method": "get", "path": "/audits/{}".format(ids[9])}
+        ]
+    }
+    batch = json.dumps(batch)
+    request = requests.post(url="{}/{}".format(URL, 'batch'), headers=HEADER, data=batch)
+    data = request.json()
+    MongoDB.write_many_to_mongodb(data)

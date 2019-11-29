@@ -16,3 +16,4 @@ idea*
 __pychache__/
 data.csv
 secrets.py
+Test_Batch.py

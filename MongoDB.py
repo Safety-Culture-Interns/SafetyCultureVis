@@ -3,15 +3,19 @@ import secrets
 
 MONGOSTRING = "mongodb+srv://{}:{}@cluster0-tjdbw.mongodb.net/test?retryWrites=true&w=majority".format(
     secrets.get_database_user(), secrets.get_database_password())
-COLLECTION_NAME = 'audits'
-DATABASE_NAME = 'iauditor'
+COLLECTION_NAME = 'audits01'
+DATABASE_NAME = 'iauditor01'
 mango_client = pymongo.MongoClient(MONGOSTRING)
 my_database = mango_client[DATABASE_NAME]
 db_collection = my_database[COLLECTION_NAME]
 
 
-def write_to_mongodb(data):
+def write_one_to_mongodb(data):
     x = db_collection.insert_one(data)
+
+
+def write_many_to_mongodb(data):
+    x = db_collection.insert_many(data)
 
 
 def update_modified(data, x):
