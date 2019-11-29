@@ -66,3 +66,19 @@ def get_all_audit_ids():
     for id in document:
         audit_ids.append(id)
     return audit_ids
+
+
+def get_audit_information(audit_id, x):
+    # TODO: takes in find information and querys the database for specific information and not entire audit.
+    if len(x) == 1:
+        audit = db_collection.distinct(x, {'audit_id': audit_id})
+        return audit[0]
+    elif len(x) == 2:
+        audit = db_collection.distinct('{}.{}'.format(x[0], x[1]), {'audit_id': audit_id})
+        return audit[0]
+    elif len(x) == 3:
+        audit = db_collection.distinct('{}.{}.{}'.format(x[0], x[1], x[2]), {'audit_id': audit_id})
+        return audit[0]
+    elif len(x) == 5:
+        audit = db_collection.distinct('{}.{}.{}.{}.{}'.format(x[0], x[1], x[2], x[3], x[4]), {'audit_id': audit_id})
+        return audit

@@ -71,33 +71,37 @@ def create_audits(audit_ids):
         # data = get_json(audit_ids[i])
         data = MongoDB.get_all_from_db(audit_ids[i])
         audit_id = data['audit_id']
-        template_id = data['template_id']
-        archived = data['archived']
-        created_on = data['audit_data']['date_started']
-        modified_on = data['audit_data']['date_modified']
-        score = data['audit_data']['score']
-        total_score = data['audit_data']['total_score']
-        score_percentage = data['audit_data']['score_percentage']
-        audit_name = data['audit_data']['name']
-        duration = data['audit_data']['duration']
-        date_completed = data['audit_data']['date_completed']
-        owner_name = data['audit_data']['authorship']['owner']  # TODO: check names for illegal characters
-        owner_id = data['audit_data']['authorship']['owner_id']
-        working = False
-        count = 0
-        while not working:
-            try:
-                latitude = data['header_items'][count]['responses']['location']['geometry']['coordinates'][1]
-                longitude = data['header_items'][count]['responses']['location']['geometry']['coordinates'][0]
-                working = True
-            except IndexError:
-                count += 1
-            except KeyError:
-                count += 1
-            if count == 8:
-                working = True
-                latitude = "none"
-                longitude = "none"
+        template_id = MongoDB.get_audit_information(audit_id, 'template_id')
+        archived = MongoDB.get_audit_information(audit_id, 'archived')
+        created_on = MongoDB.get_audit_information(audit_id, ['audit_data', 'date_started'])
+        modified_on = MongoDB.get_audit_information(audit_id, ['audit_data', 'date_modified'])
+        score = MongoDB.get_audit_information(audit_id, ['audit_data', 'score'])
+        total_score = MongoDB.get_audit_information(audit_id, ['audit_data', 'total_score'])
+        score_percentage = MongoDB.get_audit_information(audit_id, ['audit_data', 'score_percentage'])
+        audit_name = MongoDB.get_audit_information(audit_id, ['audit_data', 'name'])
+        duration = MongoDB.get_audit_information(audit_id, ['audit_data', 'duration'])
+        date_completed = MongoDB.get_audit_information(audit_id, ['audit_data', 'date_completed'])
+        owner_name = MongoDB.get_audit_information(audit_id, ['audit_data', 'authorship', 'owner'])
+        owner_id = MongoDB.get_audit_information(audit_id, ['audit_data', 'authorship', 'owner_id'])
+        latitude = MongoDB.get_audit_information(audit_id, ['header_items', 'responses', 'location', 'geometry',
+                                                            'coordinates'])[0]
+        longitude = MongoDB.get_audit_information(audit_id, ['header_items', 'responses', 'location', 'geometry',
+                                                             'coordinates'])[1]
+        # working = False
+        # count = 0
+        # while not working:
+        #     try:
+        #         latitude = data['header_items'][count]['responses']['location']['geometry']['coordinates'][1]
+        #         longitude = data['header_items'][count]['responses']['location']['geometry']['coordinates'][0]
+        #         working = True
+        #     except IndexError:
+        #         count += 1
+        #     except KeyError:
+        #         count += 1
+        #     if count == 8:
+        #         working = True
+        #         latitude = "none"
+        #         longitude = "none"
         aud = Audits.Audit(audit_id, template_id, archived, created_on, modified_on, score, total_score,
                            score_percentage,
                            audit_name, duration, date_completed, owner_name, owner_id, latitude, longitude)
