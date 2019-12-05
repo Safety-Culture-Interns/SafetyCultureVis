@@ -13,12 +13,12 @@ def sync_with_api():
     mongo_audit_dates = MongoDB.get_all('modified_at')
     api_audits = get_api_audit_ids_mod_dates()[0]
     api_audit_dates = get_api_audit_ids_mod_dates()[1]
-    new_ids = compare_api_database(mongo_audit_ids, api_audits, mongo_audit_dates, api_audit_dates)
+    new_ids = compare_api_database(mongo_audit_ids, api_audits)
     write_audits_to_db(new_ids)
 
 
 # loops through the ids from the api, and removes any from list if they are also in the mongo ids
-def compare_api_database(mongo_ids, api_ids, mongo_dates, api_dates):
+def compare_api_database(mongo_ids, api_ids):
     list = []
     for id in api_ids:
         if id in mongo_ids:  # TODO: also check modification date
