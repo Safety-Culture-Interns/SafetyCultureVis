@@ -17,3 +17,7 @@ __pycache__/
 *.pyc
 data.csv
 secrets.py
+virtual*
+.virtual*
+virtual/*
+virtual.*
