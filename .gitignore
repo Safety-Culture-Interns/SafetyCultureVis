@@ -12,8 +12,14 @@ idea*
 .idea/**/dictionaries
 .idea/**/shelf
 .DS_Store
-
-__pychache__/
+__pycache__
+__pycache__/
+*.pyc
 data.csv
 secrets.py
+virtual*
+.virtual*
+virtual/*
+virtual.*
 Test_Batch.py
+

@@ -29,6 +29,7 @@ colours = {
 
 
 def update_string(attribute):
+    """Splits strings by underscores and capitalises each word"""
     return string.capwords(' '.join(attribute.split('_')), ' ')
 
 
@@ -101,6 +102,7 @@ app.layout = html.Div([
                Input('date-picker-range', 'end_date'),
                Input('date-sort', 'value')])
 def select_date(start_date, end_date, sorting_method):
+    """Displays map points alongside score percentage based on dates selected and sorting method"""
     df[sorting_method] = pd.to_datetime(df[sorting_method])
     mask = df[sorting_method].between(start_date, end_date)
     print(mask)
@@ -159,6 +161,7 @@ def select_date(start_date, end_date, sorting_method):
      Input('yaxis', 'value')]
 )
 def update_figure(graph_type, x_value, y_value):
+    """Updates the graph based on what graph type is selected and parameters selected"""
     if graph_type == 'scatter':
         traces = [dict(
             x=df[x_value],
