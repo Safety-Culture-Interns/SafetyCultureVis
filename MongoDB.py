@@ -1,8 +1,6 @@
 import pymongo
-import secrets
 
-MONGOSTRING = "mongodb+srv://{}:{}@cluster0-tjdbw.mongodb.net/test?retryWrites=true&w=majority".format(
-    secrets.get_database_user(), secrets.get_database_password())
+MONGOSTRING = "mongodb+srv://safety-culture:Password12@cluster0-tjdbw.mongodb.net/test?retryWrites=true&w=majority"
 COLLECTION_NAME = 'audits'
 DATABASE_NAME = 'iauditor'
 mango_client = pymongo.MongoClient(MONGOSTRING)

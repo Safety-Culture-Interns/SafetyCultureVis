@@ -4,7 +4,7 @@ from flask_bcrypt import Bcrypt
 
 class Users:
     def __init__(self):
-        self.mongo_string = "mongodb+srv://matt-lewandowski:Postclip18@cluster0-tjdbw.mongodb.net/test?retryWrites=true&w=majority"
+        self.mongo_string = "mongodb+srv://safety-culture:Password12@cluster0-tjdbw.mongodb.net/test?retryWrites=true&w=majority"
         self.database_name = 'iauditor'
         self.mango_client = pymongo.MongoClient(self.mongo_string)
         self.my_database = self.mango_client[self.database_name]
