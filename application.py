@@ -1,6 +1,7 @@
-from flask import Flask, flash, redirect, render_template, request, session, abort, Response, url_for
+from flask import Flask, redirect, render_template, request, session, Response, url_for
 import os
 import time
+import APISync
 from service import *
 
 application = Flask(__name__)
@@ -11,7 +12,12 @@ def home():
     if not session.get('logged_in'):
         return render_template('login.html')
     else:
-        return "Hello Boss!"
+        return render_template('progress.html')
+
+
+@application.route('/api_sync')
+def api_sync():
+    worked = APISync.sync_with_api()
 
 
 @application.route('/login', methods=['POST'])
@@ -23,6 +29,7 @@ def do_login():
         elif not UserService().correct_log_in(request.form['username'], request.form['password']):
             error = "Invalid Password"
         elif UserService().correct_log_in(request.form['username'], request.form['password']):
+            session['logged_in'] = True
             return redirect(url_for('home'))
     return render_template('login.html', error=error)
 
@@ -49,19 +56,6 @@ def signup():
 def logout():
     session['logged_in'] = False
     return home()
-
-
-@application.route('/progress')
-def progress():
-    def generate():
-        x = 0
-
-        while x <= 100:
-            yield "data:" + str(round(x)) + "\n\n"
-            x = x + 0.2
-            time.sleep(0.5)
-
-    return Response(generate(), mimetype='text/event-stream')
 
 
 if __name__ == "__main__":

@@ -4,6 +4,7 @@ import secrets
 import json
 import csv
 from audits import Audits
+import application
 
 URL = "https://api.safetyculture.io"  # live site
 HEADER = {'Authorization': 'Bearer {}'.format(secrets.get_token()), 'Content-Type': 'application/json'}  # live site
@@ -19,6 +20,7 @@ def sync_with_api():
     new_ids = compare_api_database(mongo_audit_ids, api_audits)
     write_audits_to_db(new_ids)
     update_csv(new_ids)
+    return True
 
 
 # loops through the ids from the api, and removes any from list if they are also in the mongo ids

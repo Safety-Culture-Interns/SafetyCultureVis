@@ -16,7 +16,6 @@ class UserService:  # TODO: create a way to hash passwords
             return False
 
     def correct_log_in(self, username, password):
-        if self.users.correct_log_in(username, password):
-            return True
-        else:
-            return False
+        return self.users.login(username, password)
+
+
