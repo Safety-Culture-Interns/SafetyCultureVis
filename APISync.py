@@ -1,13 +1,13 @@
 import requests
 import MongoDB
-import secrets
 import json
 import csv
 from audits import Audits
 import application
 
 URL = "https://api.safetyculture.io"  # live site
-HEADER = {'Authorization': 'Bearer {}'.format(secrets.get_token()), 'Content-Type': 'application/json'}  # live site
+HEADER = {'Authorization': 'Bearer eed07ed3c9c760f2e81f099ae25bf6fc42880da9a4681001b812a7b4f75b28b5',
+          'Content-Type': 'application/json'}  # live site
 CSV_FILE = 'data.csv'
 
 

@@ -12,6 +12,7 @@ import dash_daq as daq
 df = pd.read_csv('data.csv')
 mean_score_percentage = df['score_percentage'].mean()
 application = flask.Flask(__name__)
+
 app = dash.Dash(
     __name__,
     server=application,
