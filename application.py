@@ -12,7 +12,8 @@ import dash_daq as daq
 df = pd.read_csv('data.csv')
 mean_score_percentage = df['score_percentage'].mean()
 application = flask.Flask(__name__)
-
+application.config['SESSION_TYPE'] = 'memcached'
+application.config['SECRET_KEY'] = 'super secret key boy'
 app = dash.Dash(
     __name__,
     server=application,
@@ -31,6 +32,8 @@ def home():
 @application.route('/api_sync')
 def api_sync():
     worked = APISync.sync_with_api()
+    if worked:
+        return redirect(url_for('/dashboard/'), Response=None)
 
 
 @application.route('/login', methods=['POST'])

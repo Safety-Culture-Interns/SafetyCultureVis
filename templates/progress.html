@@ -1,7 +1,16 @@
 {% extends "layout.html" %}
 {% block content %}
 <script>
-    var sync = new EventSource("/api_sync");
+
+    $(document).ready(function () {
+        var sync = new EventSource("/api_sync");
+        var origin = window.location.origin;
+        String(origin += '/dashboard/');
+        if (sync)
+            window.location.href = origin;
+            console.log(origin)
+
+    });
 </script>
 <form action="/signup" method="POST">
     <div class="login">
