@@ -8,9 +8,8 @@ import pandas as pd
 import dash_html_components as html
 import dash_bootstrap_components as dbc
 import dash_daq as daq
+import dash_core_components as dcc
 
-df = pd.read_csv('data.csv')
-mean_score_percentage = df['score_percentage'].mean()
 application = flask.Flask(__name__)
 application.config['SESSION_TYPE'] = 'memcached'
 application.config['SECRET_KEY'] = 'super secret key boy'
@@ -78,6 +77,14 @@ def logout():
 # This separates the flask from the dash.
 #
 
+df = pd.read_csv('data.csv')
+mean_score_percentage = df['score_percentage'].mean()
+
+app.layout = html.Div([
+    dcc.Location(id='url', refresh=False),
+    html.Div(id='page-content')
+])
+
 # dash gauge showing the average score percentage
 score_gauge = html.Div([
     daq.Gauge(
@@ -90,26 +97,57 @@ score_gauge = html.Div([
         max=100,
         min=0,
     ),
-], style={'border-width': '5px', 'border-style': 'solid', 'width': '50%', 'margin-left': '30%', 'margin-top': '10%'})
+], style={'border-width': '5px', 'border-style': 'solid', 'width': '50%', 'margin-left': '30%',
+          'margin-top': '10%'})
 
 # title of the sidebar
 sidebar_header = html.Div([
-    dbc.Row(html.Div('Dashboard', className="active", style={'padding': '15%'}), className="active")
+    dbc.Row(html.Div('Dashboard', className="active", style={'padding': '15%', 'width': '100%'}),
+            className="active")
 ])
 
 # sidebar of the homepage
 sidebar = html.Div([
     sidebar_header,
-    dbc.Row(html.A('haha1', style={'padding': '15%'})),
-    dbc.Row(html.A('haha2', style={'padding': '15%'})),
-    dbc.Row(html.A('haha3', style={'padding': '15%'}))
+    dbc.Row(dcc.Link('Go to Page 1', href='/page-1', style={'padding': '15%', 'display': 'block', 'width': '100%',
+                                                            'color': 'black', 'text-decoration': 'none'})),
+    dbc.Row(dcc.Link('Go to Page 2', href='/page-2', style={'padding': '15%', 'display': 'block', 'width': '100%',
+                                                            'color': 'black', 'text-decoration': 'none'})),
+    dbc.Row(dcc.Link('Go to Page 3', href='/page-3', style={'padding': '15%', 'display': 'block', 'width': '100%',
+                                                            'color': 'black', 'text-decoration': 'none'}))
 ], className="sidebar")
 
-# main layout
-app.layout = html.Div([
+index_page = html.Div([
     sidebar,
-    score_gauge
+    score_gauge,
 ], style={'display': 'flex', 'width': '100%', 'height': '100%'})
+
+page_1_layout = html.Div([
+    dcc.Link('Go back to home', href='/'),
+])
+
+page_2_layout = html.Div([
+    dcc.Link('Go back to home', href='/')
+])
+
+page_3_layout = html.Div([
+    dcc.Link('Go back to home', href='/')
+])
+
+
+# Update the index
+@app.callback(dash.dependencies.Output('page-content', 'children'),
+              [dash.dependencies.Input('url', 'pathname')])
+def display_page(pathname):
+    if pathname == '/page-1':
+        return page_1_layout
+    elif pathname == '/page-2':
+        return page_2_layout
+    elif pathname == '/page-3':
+        return page_3_layout
+    else:
+        return index_page
+
 
 if __name__ == "__main__":
     application.secret_key = os.urandom(12)
