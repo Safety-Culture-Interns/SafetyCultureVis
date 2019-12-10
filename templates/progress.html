@@ -1,15 +1,14 @@
 {% extends "layout.html" %}
 {% block content %}
 <script>
-
     $(document).ready(function () {
-        var sync = new EventSource("/api_sync");
         var origin = window.location.origin;
         String(origin += '/dashboard/');
-        if (sync)
-            window.location.href = origin;
-            console.log(origin)
-
+        var sync = new EventSource("/api_sync");
+        sync.onmessage = function (event) {
+            if (event.data = "done")
+                window.location.href = origin;
+        };
     });
 </script>
 <form action="/signup" method="POST">

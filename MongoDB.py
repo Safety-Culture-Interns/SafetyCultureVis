@@ -1,7 +1,8 @@
 import pymongo
+import application
 
 MONGOSTRING = "mongodb+srv://safety-culture:Password12@cluster0-tjdbw.mongodb.net/test?retryWrites=true&w=majority"
-COLLECTION_NAME = 'audits'
+COLLECTION_NAME = 'audits{}'.format(application.get_username())
 DATABASE_NAME = 'iauditor'
 mango_client = pymongo.MongoClient(MONGOSTRING)
 my_database = mango_client[DATABASE_NAME]

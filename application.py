@@ -14,6 +14,8 @@ mean_score_percentage = df['score_percentage'].mean()
 application = flask.Flask(__name__)
 application.config['SESSION_TYPE'] = 'memcached'
 application.config['SECRET_KEY'] = 'super secret key boy'
+user_service = UserService()
+username = ""
 app = dash.Dash(
     __name__,
     server=application,
@@ -29,23 +31,31 @@ def home():
         return render_template('progress.html')
 
 
+def get_username():
+    return username
+
+
 @application.route('/api_sync')
 def api_sync():
-    worked = APISync.sync_with_api()
-    if worked:
-        return redirect(url_for('/dashboard/'), Response=None)
+    def eventStream():
+        if APISync.sync_with_api():
+            yield "data:{}\n\n".format("done")
+
+    return Response(eventStream(), mimetype='text/event-stream')
 
 
 @application.route('/login', methods=['POST'])
 def do_login():
     error = None
     if request.method == 'POST':
-        if not UserService().correct_user(request.form['username']):
+        if not user_service.correct_user(request.form['username']):
             error = 'Invalid Username'
-        elif not UserService().correct_log_in(request.form['username'], request.form['password']):
+        elif not user_service.correct_log_in(request.form['username'], request.form['password']):
             error = "Invalid Password"
-        elif UserService().correct_log_in(request.form['username'], request.form['password']):
+        elif user_service.correct_log_in(request.form['username'], request.form['password']):
             session['logged_in'] = True
+            global username
+            username = request.form['username']
             return redirect(url_for('home'))
     return render_template('login.html', error=error)
 
@@ -60,7 +70,7 @@ def signup():
     error = None
     if request.method == 'POST':
         if len(request.form['username']) > 0 and len(request.form['password']) > 0 and len(request.form['api']) > 0:
-            UserService().create(request.form['username'], request.form['password'], request.form['api'])
+            user_service.create(request.form['username'], request.form['password'], request.form['api'])
             print(len(request.form['username']))
             return render_template('login.html')
         else:
