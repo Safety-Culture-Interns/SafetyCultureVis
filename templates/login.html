@@ -1,0 +1,35 @@
+{% extends "layout.html" %}
+{% block content %}
+<form action="/login" method="POST">
+    <div class="login">
+        <div class="login-screen">
+            <div class="app-title">
+                <h1>Login</h1>
+            </div>
+            <div class="login-form">
+                <div class="control-group">
+                    <input type="text" class="login-field" value="{{
+          request.form.username }}" placeholder="Username" name="username">
+                    <label class="login-field-icon fui-user" for="username"></label></div>
+                <div class="control-group">
+                    <input type="password" class="login-field" value="{{
+          request.form.password }}" placeholder="password" name="password">
+                    <label class="login-field-icon fui-lock" for="password"></label></div>
+                <input type="submit" value="Log in" class="btn btn-primary btn-large btn-block">
+            </div>
+        </div>
+        {% if error %}
+        <p class="error"><strong>Error:</strong> {{ error }}
+            {% endif %}
+    </div>
+</form>
+<form action="/go_to_signup" method="POST">
+    <div class="sign-up">
+        <div class="sign-up-screen">
+            <div class="login-form">
+                <input type="submit" value="Sign up" class="btn btn-primary btn-large btn-block">
+            </div>
+        </div>
+    </div>
+</form>
+{% endblock %}
