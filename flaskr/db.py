@@ -13,7 +13,7 @@ class Audits:
         self.db_collection = self.my_database['audits']
 
     def set_collection_name(self, username):
-        self.database_name = "audits.{}".format(username)
+        self.db_collection = self.my_database['audits-{}'.format(username)]
 
     def write_one_to_mongodb(self, data):
         x = self.db_collection.insert_one(data)
@@ -80,6 +80,10 @@ class Users:
             }
         )
         return result
+
+    # returns the api for a certain username
+    def get_api(self, username):
+        return self.db_collection_users.distinct('api_number', {"username": username})[0]
 
     def get_user(self, username, user_pass):
         if self.user_exists(username):

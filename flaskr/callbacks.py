@@ -1,6 +1,7 @@
 from flask import (
     Blueprint, flash, g, redirect, render_template, request, session, url_for
 )
+from flaskr import register_api_sync
 
 bp = Blueprint('dash', __name__, url_prefix='/')
 
@@ -15,4 +16,5 @@ def index():
 
 @bp.route('/loading')
 def loading():
+    register_api_sync()
     return render_template('parts/progress.html')

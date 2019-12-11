@@ -3,8 +3,6 @@ import dash_bootstrap_components as dbc
 import dash_daq as daq
 import pandas as pd
 
-df = pd.read_csv('api_sync/data.csv')
-mean_score_percentage = df['score_percentage'].mean()
 
 score_gauge = html.Div([
     daq.Gauge(
@@ -12,7 +10,6 @@ score_gauge = html.Div([
         showCurrentValue=True,
         units="%",
         color={"gradient": True, "ranges": {"red": [0, 10], "yellow": [10, 20], "green": [20, 100]}},
-        value=mean_score_percentage,
         label='Default',
         max=100,
         min=0,
