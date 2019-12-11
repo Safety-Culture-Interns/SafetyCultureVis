@@ -1,6 +1,6 @@
-{% extends "layout.html" %}
+{% extends 'base.html' %}
 {% block content %}
-<form action="/login" method="POST">
+<form method="post">
     <div class="login">
         <div class="login-screen">
             <div class="app-title">
@@ -21,15 +21,6 @@
         {% if error %}
         <p class="error"><strong>Error:</strong> {{ error }}
             {% endif %}
-    </div>
-</form>
-<form action="/go_to_signup" method="POST">
-    <div class="sign-up">
-        <div class="sign-up-screen">
-            <div class="login-form">
-                <input type="submit" value="Sign up" class="btn btn-primary btn-large btn-block">
-            </div>
-        </div>
     </div>
 </form>
 {% endblock %}
