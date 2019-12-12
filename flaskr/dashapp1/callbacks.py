@@ -64,4 +64,4 @@ def register_callbacks(app):
                 range=[-90.0, 90.0],
                 dtick=5
             )
-        ), width=1000, height=500, margin=go.layout.Margin(l=0, r=0, b=0, t=0, pad=50))}
+        ),  margin=go.layout.Margin(l=0, r=0, b=0, t=0, pad=50))}
