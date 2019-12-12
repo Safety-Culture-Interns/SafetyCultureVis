@@ -6,6 +6,7 @@
         String(origin += '/dashboard/');
         var sync = new EventSource("/api_sync");
         sync.onmessage = function (event) {
+            console.log(event.data);
             if (event.data = "done")
                 window.location.href = origin;
         };
