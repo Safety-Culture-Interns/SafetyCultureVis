@@ -12,7 +12,8 @@ bp = Blueprint('dash', __name__, url_prefix='/')
 
 @bp.route('/', methods=['GET', 'POST'])
 def index():
-    if 'user_id' in session:
+    if session.get('user_id') is not None:
+        print(session.get('user_id'))
         return redirect("/dashboard/")
     else:
         return redirect(url_for('auth.login'))
@@ -26,6 +27,8 @@ def loading():
             return render_template('auth/token.html')
         else:
             return render_template('parts/progress.html')
+
+
 @bp.route('/api_sync')
 def api_sync():
     def event_stream():
@@ -34,23 +37,3 @@ def api_sync():
     api = API(session['user_id'], db.Users().get_api(session['user_id']))
     api.sync_with_api()
     return Response(event_stream(), mimetype='text/event-stream')
-
-
-@bp.before_app_request
-def load_logged_in_user():
-    user_id = session.get('user_id')
-    if user_id is None:
-        g.user = None
-    else:
-        g.user = db.Users().get_user_by_id(user_id)
-
-
-def login_required(view):
-    @functools.wraps(view)
-    def wrapped_view(**kwargs):
-        if g.user is None:
-            return redirect(url_for('auth.login'))
-        return view(**kwargs)
-
-    return wrapped_view
-

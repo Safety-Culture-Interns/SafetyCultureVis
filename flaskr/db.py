@@ -102,8 +102,8 @@ class Users:
         else:
             return None
 
-    def get_user_by_id(self, id):
-        return self.db_collection_users.find_one({'_id': id})
+    def get_user_by_id(self, username):
+        return self.db_collection_users.distinct('_id', {'username': username})[0]
 
     def hash_password(self, password):
         return self.bcrypt.generate_password_hash(password)

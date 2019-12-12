@@ -3,7 +3,7 @@ import dash
 from flask import Flask
 from flask.helpers import get_root_path
 from flaskr.backend import APISync
-from flaskr import db
+from flaskr import db, auth
 
 
 def create_app(test_config=None):
@@ -42,6 +42,7 @@ def register_dashapps(app):
         dashapp1.title = "Dashapp 1"
         dashapp1.layout = layout
         register_callbacks(dashapp1)
+        _protect_dashviews(dashapp1)
 
 
 def register_blueprints(server):
@@ -49,3 +50,10 @@ def register_blueprints(server):
     from . import callbacks
     server.register_blueprint(auth.bp)
     server.register_blueprint(callbacks.bp)
+
+
+# Method to protect dash views/routes
+def _protect_dashviews(dashapp):
+    for view_func in dashapp.server.view_functions:
+        if view_func.startswith(dashapp.config.url_base_pathname):
+            dashapp.server.view_functions[view_func] = auth.login_required(dashapp.server.view_functions[view_func])
