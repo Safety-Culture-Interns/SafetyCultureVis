@@ -49,4 +49,3 @@ def register_blueprints(server):
     from . import callbacks
     server.register_blueprint(auth.bp)
     server.register_blueprint(callbacks.bp)
-
