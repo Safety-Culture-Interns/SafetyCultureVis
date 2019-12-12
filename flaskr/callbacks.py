@@ -23,6 +23,3 @@ def loading():
             return render_template('auth/token.html')
         else:
             return render_template('parts/progress.html')
-
-def run_api_sync():
-
