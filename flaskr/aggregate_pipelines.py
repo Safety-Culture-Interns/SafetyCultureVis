@@ -1,9 +1,19 @@
+from flask import session
+
 from flaskr import db
 import pandas as pd
 import pandas.io.json
 import datetime
 
-db_collection = db.Audits().db_collection
+database = db.Audits()
+db_collection = database.db_collection
+
+
+def change_collection_name(username):
+    global database
+    global db_collection
+    database.set_collection_name(username)
+    db_collection = database.db_collection
 
 
 def get_stats_by_x_days(days_back):
@@ -174,7 +184,6 @@ def get_map_dataframe():
     return pd.io.json.json_normalize(list(db_collection.aggregate(pipeline)))
 
     # test print result
-
 
 # with pd.option_context('display.max_rows', None, 'display.max_columns', None):  # more options can be specified also
 #     print(get_stats_by_x_days(900))

@@ -1,4 +1,5 @@
 import requests
+
 from flaskr import db
 from threading import Thread
 

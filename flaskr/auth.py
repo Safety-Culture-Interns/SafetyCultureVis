@@ -4,7 +4,7 @@ from flask import (
     Blueprint, flash, g, redirect, render_template, request, session, url_for
 )
 
-from flaskr import db, APISync
+from flaskr import db, APISync, aggregate_pipelines
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 
@@ -75,10 +75,10 @@ def login():
 @bp.before_app_request
 def load_logged_in_user():
     user_id = session.get('user_id')
-
     if user_id is None:
         g.user = None
     else:
+        aggregate_pipelines.change_collection_name(session['user_id'])
         g.user = db.Users().get_user_by_id(user_id)
 
 

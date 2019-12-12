@@ -1,6 +1,8 @@
 import pandas as pd
 from dash.dependencies import Input, Output
 import plotly.graph_objects as go
+from flask import session
+
 from flaskr import aggregate_pipelines
 
 scl = [0, "rgb(242, 51, 242)"], [0.125, "rgb(0, 0, 200)"], [0.25, "rgb(0, 25, 255)"], \
