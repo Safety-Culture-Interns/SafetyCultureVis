@@ -71,6 +71,12 @@ class Users:
         self.db_collection_users = self.my_database['users']
         self.bcrypt = Bcrypt(None)
 
+    def update_api(self, username, api):
+        self.db_collection_users.find_and_modify({
+            "query": {'username': username},
+            "update": {'$set': {'api_number': api}}
+        })
+
     def add_user(self, username, password, api):
         result = self.db_collection_users.insert_one(
             {

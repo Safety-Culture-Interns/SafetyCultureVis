@@ -3,8 +3,7 @@ import functools
 from flask import (
     Blueprint, flash, g, redirect, render_template, request, session, url_for
 )
-
-from flaskr import db
+from flaskr import db, APISync
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 
@@ -29,6 +28,20 @@ def register():
         flash(error)
 
     return render_template('auth/register.html')
+
+
+@bp.route('/token', methods=('GET', 'POST'))
+def token():
+    print("got to auth")
+    if request.method == 'POST':
+        api = request.form['api']
+        error = None
+        if APISync.API().is_good_api_token(api):
+            return redirect(url_for('dash.loading'))
+        else:
+            error = 'Wrong or expired API'
+        flash(error)
+    return render_template('auth/token.html')
 
 
 @bp.route('/login', methods=('GET', 'POST'))

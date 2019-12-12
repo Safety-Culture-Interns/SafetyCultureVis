@@ -1,7 +1,6 @@
 import os
 import dash
 from flask import Flask
-from flask import session
 from flask.helpers import get_root_path
 from flaskr.backend import APISync
 from flaskr import db
@@ -51,7 +50,3 @@ def register_blueprints(server):
     server.register_blueprint(auth.bp)
     server.register_blueprint(callbacks.bp)
 
-
-def register_api_sync():
-    api = APISync.API(session['user_id'], db.Users().get_api(session['user_id']))
-    api.sync_with_api()
