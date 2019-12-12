@@ -1,8 +1,31 @@
 import dash_html_components as html
 import dash_bootstrap_components as dbc
+import dash_core_components as dcc
 import dash_daq as daq
-import pandas as pd
+import datetime
 
+current_date = datetime.datetime.now()
+previous_date = current_date + datetime.timedelta(-29)
+
+location_map = html.Div([
+    html.H3('Map'),
+    html.Div(children=[
+        dcc.DatePickerRange(
+            id='date-picker-range',
+            start_date=previous_date.date(),
+            end_date=current_date.date()
+        )], style={'width': '25%', 'display': 'inline-block'}),
+    html.Div(children=[
+        dcc.Dropdown(options=[
+            {'label': 'Audit Created', 'value': 'Created_at'},
+            {'label': 'Audit Modified', 'value': 'Modified_at'},
+            {'label': 'Date Completed', 'value': 'completed_at'}
+        ], value='Created_at',
+            id='date-sort')], style={'width': '25%', 'display': 'inline-block'}),
+    dcc.Graph(
+        id='map'
+    ),
+])
 
 score_gauge = html.Div([
     daq.Gauge(
@@ -32,5 +55,5 @@ sidebar = html.Div([
 # main layout
 layout = html.Div([
     sidebar,
-    score_gauge
+    score_gauge, location_map
 ], style={'display': 'flex', 'width': '100%', 'height': '100%'})

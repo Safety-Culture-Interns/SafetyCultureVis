@@ -26,8 +26,6 @@ def loading():
             return render_template('auth/token.html')
         else:
             return render_template('parts/progress.html')
-
-
 @bp.route('/api_sync')
 def api_sync():
     def event_stream():
@@ -55,3 +53,4 @@ def login_required(view):
         return view(**kwargs)
 
     return wrapped_view
+
