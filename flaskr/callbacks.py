@@ -19,14 +19,13 @@ def index():
         return redirect(url_for('auth.login'))
 
 
-@bp.route('/loading', methods=['GET'])
+@bp.route('/loading', methods=['GET', 'POST'])
 def loading():
-    if request.method == 'GET':
-        api = API(session['user_id'], db.Users().get_api(session['user_id']))
-        if not api.is_good_api_token():
-            return render_template('auth/token.html')
-        else:
-            return render_template('parts/progress.html')
+    api = API(session['user_id'], db.Users().get_api(session['user_id']))
+    if not api.is_good_api_token():
+        return redirect(url_for('auth.token'))
+    else:
+        return render_template('parts/progress.html')
 
 
 @bp.route('/api_sync')

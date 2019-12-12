@@ -41,11 +41,12 @@ def register():
 
 @bp.route('/token', methods=('GET', 'POST'))
 def token():
-    print("got to auth")
     if request.method == 'POST':
         api = request.form['api']
         error = None
         if APISync.API().is_good_api_token(api):
+            print(session['user_id'], api)
+            db.Users().update_api(session['user_id'], api)
             return redirect(url_for('dash.loading'))
         else:
             error = 'Wrong or expired API'
