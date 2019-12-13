@@ -30,9 +30,24 @@ def loading():
 
 @bp.route('/api_sync')
 def api_sync():
-    def event_stream():
-        yield "data:{}\n\n".format("done")
-
     api = API(session['user_id'], db.Users().get_api(session['user_id']))
-    api.sync_with_api()
+
+    def event_stream():
+        # yield "data:{}\n\n".format("done")
+        for number in api.sync_with_api():
+            for numb in number:
+                yield "data:" + str(round(numb)) + "\n\n"
+
     return Response(event_stream(), mimetype='text/event-stream')
+
+
+# def progress():
+#     def generate():
+#         x = 0
+#
+#         while x <= 100:
+#             yield "data:" + str(round(x)) + "\n\n"
+#             x = x + 0.2
+#             time.sleep(0.5)
+#
+#     return Response(generate(), mimetype='text/event-stream')

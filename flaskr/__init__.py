@@ -6,12 +6,14 @@ from flaskr.backend import APISync
 from flaskr import db, auth
 
 
+
 def create_app(test_config=None):
     # create and configure the app
     server = Flask(__name__, instance_relative_config=True)
     server.config.from_mapping(
         SECRET_KEY=b'\xec\x10l\xd5\x19E&q\xc5\x85\x8c\xfc\x1a5Y\xed'
     )
+
     register_blueprints(server)
     register_dashapps(server)
     if test_config is None:

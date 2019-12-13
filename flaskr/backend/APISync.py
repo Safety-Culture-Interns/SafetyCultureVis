@@ -24,8 +24,7 @@ class API:
         api_audits = self.get_api_audit_ids_mod_dates()[0]
         api_audit_dates = self.get_api_audit_ids_mod_dates()[1]
         new_ids = self.compare_api_database(mongo_audit_ids, api_audits)
-        self.write_audits_to_db(new_ids)
-        return True
+        yield self.write_audits_to_db(new_ids)
 
     # loops through the ids from the api, and removes any from list if they are also in the mongo ids
     def compare_api_database(self, mongo_ids, api_ids):
@@ -73,11 +72,24 @@ class API:
 
     # uses multi-threading to upload audits to database
     def write_audits_to_db(self, audit_ids):
+
         def do_a_bunch(count):
             item = self.get_json(audit_ids[count])
             self.MongoDB.write_one_to_mongodb(item)
-            print("{} uploaded to Mongodb".format(count))
 
-        for i in range(len(audit_ids)):
-            t = Thread(target=do_a_bunch, args=(i,))
-            t.start()
+        def thread():
+            count = 0
+            threads = list()
+            if len(audit_ids) == 0:
+                yield 100
+            for i in range(len(audit_ids)):
+                t = Thread(target=do_a_bunch, args=(i,))
+                threads.append(t)
+                t.start()
+            for index, thread in enumerate(threads):
+                thread.join()
+                count += 1
+                yield (count/len(audit_ids))*100
+
+        for done_thread in thread():
+            yield done_thread

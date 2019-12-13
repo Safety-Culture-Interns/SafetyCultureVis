@@ -1,9 +1,7 @@
 import functools
-
 from flask import (
     Blueprint, flash, g, redirect, render_template, request, session, url_for
 )
-
 from flaskr import db, APISync, aggregate_pipelines
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
@@ -30,6 +28,8 @@ def register():
             error = 'Password is required.'
         elif db.Users().user_exists(username):
             error = 'User {} is already registered.'.format(username)
+        elif not api.is_good_api_token(token):
+            error = 'Token {} was not accepted.'
         if error is None:
             db.Users().add_user(username, password, api)
             return redirect(url_for('auth.login'))
@@ -45,7 +45,6 @@ def token():
         api = request.form['api']
         error = None
         if APISync.API().is_good_api_token(api):
-            print(session['user_id'], api)
             db.Users().update_api(session['user_id'], api)
             return redirect(url_for('dash.loading'))
         else:
