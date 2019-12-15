@@ -5,18 +5,9 @@ import pandas as pd
 import pandas.io.json
 import datetime
 
-database = db.Audits()
-db_collection = database.db_collection
 
-
-def change_collection_name(username):
-    global database
-    global db_collection
-    database.set_collection_name(username)
-    db_collection = database.db_collection
-
-
-def get_stats_by_x_days(days_back):
+def get_stats_by_x_days(days_back, username):
+    db_collection = db.Audits().get_collection(username)
     now = datetime.datetime.utcnow()
     last_xd = now - datetime.timedelta(days=days_back)
     pipeline = [
@@ -79,7 +70,8 @@ def get_stats_by_x_days(days_back):
     return pd.io.json.json_normalize(list(db_collection.aggregate(pipeline)))
 
 
-def get_stats_by_day_dataframe():
+def get_stats_by_day_dataframe(username):
+    db_collection = db.Audits().get_collection(username)
     pipeline = [
         {
             '$project': {
@@ -110,7 +102,8 @@ def get_stats_by_day_dataframe():
     return pd.io.json.json_normalize(list(db_collection.aggregate(pipeline)))
 
 
-def get_last_x_days_dataframe():
+def get_last_x_days_dataframe(username):
+    db_collection = db.Audits().get_collection(username)
     now = datetime.datetime.utcnow()
     last_30d = now - datetime.timedelta(days=30)
     print(last_30d)
@@ -130,7 +123,8 @@ def get_last_x_days_dataframe():
     return pd.io.json.json_normalize(list(db_collection.aggregate(pipeline)))
 
 
-def get_failed_report_dataframe():
+def get_failed_report_dataframe(username):
+    db_collection = db.Audits().get_collection(username)
     pipeline = [
         {
             '$project': {'_id': 0,
@@ -152,7 +146,8 @@ def get_failed_report_dataframe():
     return pd.io.json.json_normalize(list(db_collection.aggregate(pipeline)))
 
 
-def get_map_dataframe():
+def get_map_dataframe(username):
+    db_collection = db.Audits().get_collection(username)
     pipeline = [
         {
             '$project': {

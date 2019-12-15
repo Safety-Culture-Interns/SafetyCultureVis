@@ -78,7 +78,6 @@ def load_logged_in_user():
     if user_id is None:
         g.user = None
     else:
-        aggregate_pipelines.change_collection_name(session['user_id'])
         g.user = db.Users().get_user_by_id(user_id)
 
 

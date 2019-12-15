@@ -12,6 +12,9 @@ class Audits:
         self.my_database = self.mango_client[self.database_name]
         self.db_collection = self.my_database['audits']
 
+    def get_collection(self, username):
+        return self.my_database['audits-{}'.format(username)]
+
     def set_collection_name(self, username):
         self.db_collection = self.my_database['audits-{}'.format(username)]
 

@@ -17,7 +17,7 @@ def register_callbacks(app):
                    Input('date-sort', 'value')])
     def select_date(start_date, end_date, sorting_method):
         """Displays map points alongside score percentage based on dates selected and sorting method"""
-        df = aggregate_pipelines.get_map_dataframe()
+        df = aggregate_pipelines.get_map_dataframe(session['user_id'])
         values = list(df.columns.values)
         df[sorting_method] = pd.to_datetime(df[sorting_method or 'Created_at'])
         mask = df[sorting_method].between(start_date, end_date)
