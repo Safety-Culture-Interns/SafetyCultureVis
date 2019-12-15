@@ -3,7 +3,7 @@ from dash.dependencies import Input, Output
 import plotly.graph_objects as go
 from flask import session
 
-from flaskr import aggregate_pipelines
+from . import aggregate_pipelines
 
 scl = [0, "rgb(242, 51, 242)"], [0.125, "rgb(0, 0, 200)"], [0.25, "rgb(0, 25, 255)"], \
       [0.375, "rgb(0, 152, 255)"], [0.5, "rgb(44, 255, 150)"], [0.625, "rgb(151, 255, 0)"], \
@@ -66,4 +66,15 @@ def register_callbacks(app):
                 range=[-90.0, 90.0],
                 dtick=5
             )
-        ),  margin=go.layout.Margin(l=0, r=0, b=0, t=0, pad=50))}
+        ), margin=go.layout.Margin(l=0, r=0, b=0, t=0, pad=50))}
+
+    @app.callback(
+        Output(component_id='my-gauge', component_property='value'),
+        [Input(component_id='fake-input', component_property='value')])
+    def update_output(value):
+        data = aggregate_pipelines.get_failed_report_dataframe(session['user_id'])
+        failed = data['count'][0]
+        passed = data['count'][1]  # will make smaller once we have all the information we need.
+        total = failed + passed
+        score = (passed / total) * 100
+        return score

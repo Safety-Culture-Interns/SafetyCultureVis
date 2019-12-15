@@ -2,7 +2,8 @@ import functools
 from flask import (
     Blueprint, flash, g, redirect, render_template, request, session, url_for
 )
-from flaskr import db, APISync, aggregate_pipelines
+from flaskr import db, APISync
+from flaskr.dashapp1 import aggregate_pipelines
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 

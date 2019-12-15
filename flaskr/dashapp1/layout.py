@@ -4,6 +4,10 @@ import dash_core_components as dcc
 import dash_daq as daq
 import datetime
 
+from flask import session
+
+from . import aggregate_pipelines
+
 current_date = datetime.datetime.now()
 previous_date = current_date + datetime.timedelta(-29)
 
@@ -20,7 +24,8 @@ location_map = html.Div([
             {'label': 'Audit Modified', 'value': 'Modified_at'},
             {'label': 'Date Completed', 'value': 'completed_at'}
         ], value='Created_at',
-            id='date-sort')], style={'width': '100%', 'display': 'inline-block', 'text-align': 'center', 'margin': '0 auto'}),
+            id='date-sort')],
+        style={'width': '100%', 'display': 'inline-block', 'text-align': 'center', 'margin': '0 auto'}),
     dcc.Graph(
         id='map',
         style={'width': '100%'},
@@ -33,10 +38,15 @@ location_map = html.Div([
         }
     ),
 ], style={'width': '100%', 'display': 'flex', 'flex-wrap': 'wrap', 'margin-top': '10px'})
-
 score_gauge = html.Div([
+    dcc.Input(
+        id='fake-input',
+        value="none",
+        type='text',
+        style={'display': 'None'}),
     daq.Gauge(
         id='my-gauge',
+        value=0,
         showCurrentValue=True,
         units="%",
         color={"gradient": True, "ranges": {"red": [0, 10], "yellow": [10, 20], "green": [20, 100]}},
@@ -45,6 +55,7 @@ score_gauge = html.Div([
         min=0,
     ),
 ], style={'border-width': '5px', 'border-style': 'solid', 'width': '85%', 'position': 'relative'})
+
 
 # title of the sidebar
 sidebar_header = html.Div([
