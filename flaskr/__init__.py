@@ -6,7 +6,6 @@ from flaskr.backend import APISync
 from flaskr import db, auth
 
 
-
 def create_app(test_config=None):
     # create and configure the app
     server = Flask(__name__, instance_relative_config=True)
