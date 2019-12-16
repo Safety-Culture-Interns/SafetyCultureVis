@@ -126,8 +126,7 @@ def register_callbacks(app):
          Input('date-picker-range', 'end_date')]
     )
     def update_graph(start_date, end_date):
-        days = len(pd.date_range(end=end_date, start=start_date).to_pydatetime().tolist())
-        df = aggregate_pipelines.get_stats_by_x_days(days, session['user_id'])
+        df = aggregate_pipelines.get_stats_by_x_days(session['user_id'], start_date, end_date)
         values = list(df.columns.values)
         return {"data": [create_line(df, values, 6, 2), create_line(df, values, 6, 4)],
                 "layout": go.Layout(title="Average Scores",
@@ -140,8 +139,7 @@ def register_callbacks(app):
          Input('date-picker-range', 'end_date')]
     )
     def update_graph(start_date, end_date):
-        days = len(pd.date_range(end=end_date, start=start_date).to_pydatetime().tolist())
-        df = aggregate_pipelines.get_stats_by_x_days(days, session['user_id'])
+        df = aggregate_pipelines.get_stats_by_x_days(session['user_id'], start_date, end_date)
         values = list(df.columns.values)
         return {"data": [create_line(df, values, 6, 3)],
                 "layout": go.Layout(title="Average Score Percentage",
@@ -154,8 +152,7 @@ def register_callbacks(app):
          Input('date-picker-range', 'end_date')]
     )
     def update_graph(start_date, end_date):
-        days = len(pd.date_range(end=end_date, start=start_date).to_pydatetime().tolist())
-        df = aggregate_pipelines.get_stats_by_x_days(days, session['user_id'])
+        df = aggregate_pipelines.get_stats_by_x_days(session['user_id'], start_date, end_date)
         values = list(df.columns.values)
         return {"data": [create_line(df, values, 6, 1)],
                 "layout": go.Layout(title="Average Audit Duration",
@@ -168,8 +165,7 @@ def register_callbacks(app):
          Input('date-picker-range', 'end_date')]
     )
     def update_graph(start_date, end_date):
-        days = len(pd.date_range(end=end_date, start=start_date).to_pydatetime().tolist())
-        df = aggregate_pipelines.get_stats_by_x_days(days, session['user_id'])
+        df = aggregate_pipelines.get_stats_by_x_days(session['user_id'], start_date, end_date)
         values = list(df.columns.values)
         return {"data": [create_line(df, values, 6, 0), create_line(df, values, 6, 7)],
                 "layout": go.Layout(title="Total vs Failed Audits",
