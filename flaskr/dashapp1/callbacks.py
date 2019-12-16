@@ -61,10 +61,13 @@ def register_callbacks(app):
     @app.callback([
         Output('my-gauge', 'value'),
         Output('total-failed', 'children'),
-        Output('total-passed', 'children')],
-        [Input('fake-input', 'value')])
-    def update_output(value):
+        Output('total-passed', 'children'),
+        Output('avg-score', 'children')],
+        [Input('date-picker-range', 'start_date'),
+         Input('date-picker-range', 'end_date')])
+    def update_output(start_date, end_date):
         data = aggregate_pipelines.get_failed_report_dataframe(session['user_id'])
+        score_percentage = round(aggregate_pipelines.get_average_score_percentage(session['user_id']))
         failed = data['count'][0]
         passed = data['count'][1]  # will make smaller once we have all the information we need.
         total = failed + passed
@@ -72,30 +75,42 @@ def register_callbacks(app):
         percentage_passed = round((passed / total) * 100)
         style = {'background-color': 'red'}
         return percentage_passed, 'Failed: {}%'.format(percentage_failed), 'Passed: {}%'.format(
-            percentage_passed)
+            percentage_passed), 'Avg Score: {}%'.format(score_percentage)
 
     @app.callback([
         Output('total-failed', 'style'),
-        Output('total-passed', 'style')],
-        [Input('fake-input', 'value')])
-    def update_output(value):
+        Output('total-passed', 'style'),
+        Output('avg-score', 'style')],
+        [Input('date-picker-range', 'start_date'),
+         Input('date-picker-range', 'end_date')])
+    def update_output(start_date, end_date):
         data = aggregate_pipelines.get_failed_report_dataframe(session['user_id'])
+        score_percentage = round(aggregate_pipelines.get_average_score_percentage(session['user_id']))
         failed = data['count'][0]
         passed = data['count'][1]
         total = failed + passed
         percentage_failed = round((failed / total) * 100)
         percentage_passed = round((passed / total) * 100)
         failed_style = {'margin': '10px auto', 'padding': '15px 0', }
+        avg_style = {'margin': '10px auto', 'padding': '15px 0', }
         if percentage_failed >= 50:
-            failed_style['background-color'] = 'rgba(255, 0, 0, 0.18)'
+            failed_style['background-color'] = 'rgba(255, 0, 0, 0.18)'  # red
         elif percentage_failed >= 30:
-            failed_style['background-color'] = 'rgba(255, 153, 0, 0.42)'
+            failed_style['background-color'] = 'rgba(255, 153, 0, 0.42)'  # orange
         elif percentage_failed >= 20:
-            failed_style['background-color'] = 'rgba(255, 247, 0, 0.36)'
+            failed_style['background-color'] = 'rgba(255, 247, 0, 0.36)'  # yellow
         else:
-            failed_style['background-color'] = 'rgba(133, 255, 0, 0.25)'
+            failed_style['background-color'] = 'rgba(133, 255, 0, 0.25)'  # green
+        if score_percentage <= 50:
+            avg_style['background-color'] = 'rgba(255, 0, 0, 0.18)'  # red
+        elif score_percentage <= 70:
+            avg_style['background-color'] = 'rgba(255, 153, 0, 0.42)'  # orange
+        elif score_percentage <= 80:
+            avg_style['background-color'] = 'rgba(255, 247, 0, 0.36)'  # yellow
+        else:
+            avg_style['background-color'] = 'rgba(133, 255, 0, 0.25)'  # green
 
-        return failed_style, failed_style
+        return failed_style, failed_style, avg_style
 
     @app.callback(
         Output(component_id='score-graph', component_property='figure'),
