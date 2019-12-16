@@ -68,10 +68,10 @@ def get_avg_duration_dataframe(username, days_back):
     return pd.io.json.json_normalize(list(db_collection.aggregate(pipeline2)))
 
 
-def get_stats_by_x_days(username, days_back):
+def get_stats_by_x_days(username, start_date, end_date):
     db_collection = db.Audits().get_collection(username)
-    now = datetime.datetime.utcnow()
-    last_xd = now - datetime.timedelta(days=days_back)
+    start_datetime = datetime.datetime(int(start_date[0:4]), int(start_date[5:7]), int(start_date[8:10]))
+    end_datetime = datetime.datetime(int(end_date[0:4]), int(end_date[5:7]), int(end_date[8:10]))
     pipeline = [
         {
             '$project': {
@@ -84,13 +84,15 @@ def get_stats_by_x_days(username, days_back):
                 'failed': {'$cond': [{'$eq': ['$audit_data.date_completed', None]}, 1, 0]},
                 'completed': {'$cond': [{'$eq': ['$audit_data.date_completed', None]}, 0, 1]},
                 'date': {'$substr': ["$modified_at", 0, 10]},
-                'array_values': {'$gte': [{'$dateFromString': {'dateString': '$created_at'}}, last_xd]}
+                'within_start_date': {'$gte': [{'$dateFromString': {'dateString': '$created_at'}}, start_datetime]},
+                'within_end_date': {'$lte': [{'$dateFromString': {'dateString': '$created_at'}}, end_datetime]}
 
             }
         },
         {
             '$match': {
-                'array_values': True
+                'within_start_date': True,
+                'within_end_date': True
             }
         },
         {
@@ -132,21 +134,23 @@ def get_stats_by_x_days(username, days_back):
     return pd.io.json.json_normalize(list(db_collection.aggregate(pipeline)))
 
 
-def get_average_score_percentage(username):
+def get_average_score_percentage(username, start_date, end_date):
     db_collection = db.Audits().get_collection(username)
-    now = datetime.datetime.utcnow()
-    last_30d = now - datetime.timedelta(days=30)
+    start_datetime = datetime.datetime(int(start_date[0:4]), int(start_date[5:7]), int(start_date[8:10]))
+    end_datetime = datetime.datetime(int(end_date[0:4]), int(end_date[5:7]), int(end_date[8:10]))
     pipeline = [
         {
             '$project': {
                 'score_percentage': "$audit_data.score_percentage",
-                'array_values': {'$gte': [{'$dateFromString': {'dateString': '$created_at'}}, last_30d]}
+                'within_start_date': {'$gte': [{'$dateFromString': {'dateString': '$created_at'}}, start_datetime]},
+                'within_end_date': {'$lte': [{'$dateFromString': {'dateString': '$created_at'}}, end_datetime]}
             }
 
         },
         {
             '$match': {
-                'array_values': True
+                'within_start_date': True,
+                'within_end_date': True
             }
         },
         {
@@ -165,6 +169,9 @@ def get_average_score_percentage(username):
 
         }
     ]
+    if pd.io.json.json_normalize(list(db_collection.aggregate(pipeline))).get('avg_score_percentage') is None:
+        return 0
+
     return pd.io.json.json_normalize(list(db_collection.aggregate(pipeline))).get('avg_score_percentage').iloc[0]
 
 
@@ -221,16 +228,26 @@ def get_last_x_days_dataframe(username):
     return pd.io.json.json_normalize(list(db_collection.aggregate(pipeline)))
 
 
-def get_failed_report_dataframe(username):
+def get_failed_report_dataframe(username, start_date, end_date):
     db_collection = db.Audits().get_collection(username)
+    start_datetime = datetime.datetime(int(start_date[0:4]), int(start_date[5:7]), int(start_date[8:10]))
+    end_datetime = datetime.datetime(int(end_date[0:4]), int(end_date[5:7]), int(end_date[8:10]))
     pipeline = [
         {
             '$project': {'_id': 0,
                          'array_values': {
-                             '$cond': [{'$eq': ['$audit_data.date_completed', None]}, 'failed', 'completed']}
+                             '$cond': [{'$eq': ['$audit_data.date_completed', None]}, 'failed', 'completed']},
+                         'within_start_date': {
+                             '$gte': [{'$dateFromString': {'dateString': '$created_at'}}, start_datetime]},
+                         'within_end_date': {'$lte': [{'$dateFromString': {'dateString': '$created_at'}}, end_datetime]}
                          }
         },
-
+        {
+            '$match': {
+                'within_start_date': True,
+                'within_end_date': True
+            }
+        },
         {
             '$group': {
                 '_id': '$array_values',
@@ -278,6 +295,7 @@ def get_map_dataframe(username):
 
     # test print result
 
+
 #
 with pd.option_context('display.max_rows', None, 'display.max_columns', None):  # more options can be specified also
-    print(get_average_score_percentage('matthew'))
+    print(get_failed_report_dataframe('matthew', '2018-12-16', '2019-12-16'))
