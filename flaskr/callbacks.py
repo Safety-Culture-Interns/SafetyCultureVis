@@ -13,7 +13,7 @@ bp = Blueprint('dash', __name__, url_prefix='/')
 @bp.route('/', methods=['GET', 'POST'])
 def index():
     if session.get('user_id') is not None:
-        print(session.get('user_id'))
+        #print(session.get('user_id'))
         return redirect("/dashboard/")
     else:
         return redirect(url_for('auth.login'))

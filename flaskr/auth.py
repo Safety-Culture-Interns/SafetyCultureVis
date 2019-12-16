@@ -29,7 +29,7 @@ def register():
             error = 'Password is required.'
         elif db.Users().user_exists(username):
             error = 'User {} is already registered.'.format(username)
-        elif not api.is_good_api_token(token):
+        elif not APISync.API().is_good_api_token(api):
             error = 'Token {} was not accepted.'
         if error is None:
             db.Users().add_user(username, password, api)

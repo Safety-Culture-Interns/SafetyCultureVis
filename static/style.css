@@ -361,3 +361,16 @@ a.logout_button {
     text-decoration: none;
     padding: 15px;
 }
+
+.inside_pretty_container {
+    height: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    background-color: #fff;
+}
+
+div#score_guage {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+}

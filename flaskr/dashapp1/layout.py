@@ -11,7 +11,21 @@ from . import aggregate_pipelines
 
 current_date = datetime.datetime.now()
 previous_date = current_date + datetime.timedelta(-29)
-
+# header bar
+header = html.Div([
+    html.Div([
+        html.Img(src='/dashboard/assets/iauditor-badge.png',
+                 style={'height': '60px', 'width': 'auto', 'margin-bottom': '25px'})
+    ], className='one-third column'),
+    html.Div([
+        html.H3('Safety Culture Dashboard'),
+        html.H5('Your overview')
+    ], className='one-half column', id='title'),
+    html.Div([
+        html.A('Logout', href='/auth/logout', className='logout_button')
+    ], className='one-third column', style={'text-align': 'right'}),
+], className='flex-display', id='header', style={'margin-bottom': '25px'})
+# location map and drop downs
 location_map = html.Div([
     html.Div([
         html.Div(children=[
@@ -46,6 +60,7 @@ location_map = html.Div([
     ], className='pretty_container'),
 
 ], id='right-column', className='eight columns')
+# the score guage
 score_gauge = html.Div([
     dcc.Input(
         id='fake-input',
@@ -62,52 +77,53 @@ score_gauge = html.Div([
         max=100,
         min=0,
     ),
+    html.Div([
+        html.H6("Failed: 0%", id='total-failed', className='pretty_container five columns',
+                style={'margin': '10px auto', 'padding': '15px 0'}
+                ),
+        html.H6('Passed: 0%', id='total-passed', className='pretty_container five columns',
+                style={'margin': '10px auto', 'padding': '15px 0'}),
+        html.H6("Avg Score: 0%", id='avg-score', className='pretty_container five columns',
+                style={'margin': '10px auto', 'padding': '15px 0'},
+                ),
+        html.H6('Total Passed: 0', id='total-p', className='pretty_container five columns',
+                style={'margin': '10px auto', 'padding': '15px 0'})
+    ], className='inside_pretty_container')
+], id='score_guage', className='pretty_container four columns')
 
-], id='score_guage', className='pretty_container four columns', style={'border-width': '5px', 'border-style': 'solid', 'width': '85%', 'position': 'relative'})
-
+# combining into divs
 score_graph = html.Div([
     dcc.Graph(id='score-graph')
-])
+], className='pretty_container six columns')
 
 score_percent_graph = html.Div([
     dcc.Graph(id='score-percent-graph')
-])
+], className='pretty_container six columns')
 
 duration_graph = html.Div([
     dcc.Graph(id='duration-graph')
-])
+], className='pretty_container six columns')
 
 audits_graph = html.Div([
     dcc.Graph(id='audits-graph')
-])
-
-# title of the sidebar
-sidebar_header = html.Div([
-    dbc.Row(html.Div('Dashboard', className="active", style={'padding': '12%'}), className="active")
-])
+], className='pretty_container six columns')
+# average audit duration and total vs failed audits
+audit_duration_failed_audits = html.Div([
+    duration_graph,
+    audits_graph
+], className='flex-display')
+# average scores and score percentages
+average_scores_percentages = html.Div([
+    score_graph,
+    score_percent_graph
+], className='flex-display')
 # map and health bar
 map_health_bar = html.Div([
     score_gauge, location_map
 ], className='flex-display')
 
-# header bar
-header = html.Div([
-    html.Div([
-        html.Img(src='/dashboard/assets/iauditor-badge.png',
-                 style={'height': '60px', 'width': 'auto', 'margin-bottom': '25px'})
-    ], className='one-third column'),
-    html.Div([
-        html.H3('Safety Culture Dashboard'),
-        html.H5('Your overview')
-    ], className='one-half column', id='title'),
-    html.Div([
-        html.A('Logout', href='/auth/logout', className='logout_button')
-    ], className='one-third column', style={'text-align': 'right'}),
-], className='flex-display', id='header', style={'margin-bottom': '25px'})
-
 # main layout
 layout = html.Div([
 
-    header, map_health_bar, score_graph, score_percent_graph, duration_graph, audits_graph
+    header, map_health_bar, average_scores_percentages, audit_duration_failed_audits
 ], id='mainContainer', style={'display': 'flex', 'flex-wrap': 'wrap', 'width': '100%', 'height': '100%'})
-
