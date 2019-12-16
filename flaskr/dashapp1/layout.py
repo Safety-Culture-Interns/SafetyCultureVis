@@ -75,14 +75,17 @@ map_health_bar = html.Div([
 # header bar
 header = html.Div([
     html.Div([
-        html.Img(src='iauditor-badge.png')
+        html.Img(src='/dashboard/assets/iauditor-badge.png',
+                 style={'height': '60px', 'width': 'auto', 'margin-bottom': '25px'})
     ], className='one-third column'),
     html.Div([
-        html.H1('Safety Culture Dashboard')
+        html.H3('Safety Culture Dashboard'),
+        html.H5('Your overview')
     ], className='one-half column', id='title'),
     html.Div([
-    ], className='one-third column'),
-], className='row flex-display', id='header', style={'margin-bottom': '25px'})
+        html.A('Logout', href='/auth/logout', className='logout_button')
+    ], className='one-third column', style={'text-align': 'right'}),
+], className='flex-display', id='header', style={'margin-bottom': '25px'})
 
 # main layout
 layout = html.Div([
