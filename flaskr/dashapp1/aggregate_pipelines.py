@@ -132,6 +132,42 @@ def get_stats_by_x_days(username, days_back):
     return pd.io.json.json_normalize(list(db_collection.aggregate(pipeline)))
 
 
+def get_average_score_percentage(username):
+    db_collection = db.Audits().get_collection(username)
+    now = datetime.datetime.utcnow()
+    last_30d = now - datetime.timedelta(days=30)
+    pipeline = [
+        {
+            '$project': {
+                'score_percentage': "$audit_data.score_percentage",
+                'array_values': {'$gte': [{'$dateFromString': {'dateString': '$created_at'}}, last_30d]}
+            }
+
+        },
+        {
+            '$match': {
+                'array_values': True
+            }
+        },
+        {
+            "$group": {
+                '_id': None,
+                'avg_score_percentage': {
+                    '$avg': "$score_percentage"
+                }
+            }
+        },
+        {
+            '$project': {
+                '_id': 0,
+                'avg_score_percentage': 1
+            }
+
+        }
+    ]
+    return pd.io.json.json_normalize(list(db_collection.aggregate(pipeline))).get('avg_score_percentage').iloc[0]
+
+
 def get_stats_by_day_dataframe(username):
     db_collection = db.Audits().get_collection(username)
     pipeline = [
@@ -243,5 +279,5 @@ def get_map_dataframe(username):
     # test print result
 
 #
-# with pd.option_context('display.max_rows', None, 'display.max_columns', None):  # more options can be specified also
-#     print(get_avg_duration_dataframe('matthew', 900))
+with pd.option_context('display.max_rows', None, 'display.max_columns', None):  # more options can be specified also
+    print(get_average_score_percentage('matthew'))
