@@ -57,16 +57,45 @@ def register_callbacks(app):
                     "style": 'mapbox://styles/mapbox/light-v9'}
         )}
 
-    @app.callback(
-        Output(component_id='my-gauge', component_property='value'),
-        [Input(component_id='fake-input', component_property='value')])
+    # callback from the Guage
+    @app.callback([
+        Output('my-gauge', 'value'),
+        Output('total-failed', 'children'),
+        Output('total-passed', 'children')],
+        [Input('fake-input', 'value')])
     def update_output(value):
         data = aggregate_pipelines.get_failed_report_dataframe(session['user_id'])
         failed = data['count'][0]
         passed = data['count'][1]  # will make smaller once we have all the information we need.
         total = failed + passed
-        score = (passed / total) * 100
-        return score
+        percentage_failed = round((failed / total) * 100)
+        percentage_passed = round((passed / total) * 100)
+        style = {'background-color': 'red'}
+        return percentage_passed, 'Failed: {}%'.format(percentage_failed), 'Passed: {}%'.format(
+            percentage_passed)
+
+    @app.callback([
+        Output('total-failed', 'style'),
+        Output('total-passed', 'style')],
+        [Input('fake-input', 'value')])
+    def update_output(value):
+        data = aggregate_pipelines.get_failed_report_dataframe(session['user_id'])
+        failed = data['count'][0]
+        passed = data['count'][1]
+        total = failed + passed
+        percentage_failed = round((failed / total) * 100)
+        percentage_passed = round((passed / total) * 100)
+        failed_style = {'margin': '10px auto', 'padding': '15px 0', }
+        if percentage_failed >= 50:
+            failed_style['background-color'] = 'rgba(255, 0, 0, 0.18)'
+        elif percentage_failed >= 30:
+            failed_style['background-color'] = 'rgba(255, 153, 0, 0.42)'
+        elif percentage_failed >= 20:
+            failed_style['background-color'] = 'rgba(255, 247, 0, 0.36)'
+        else:
+            failed_style['background-color'] = 'rgba(133, 255, 0, 0.25)'
+
+        return failed_style, failed_style
 
     @app.callback(
         Output(component_id='score-graph', component_property='figure'),
