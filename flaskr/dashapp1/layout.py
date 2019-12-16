@@ -3,6 +3,7 @@ import dash_bootstrap_components as dbc
 import dash_core_components as dcc
 import dash_daq as daq
 import datetime
+import plotly.graph_objects as go
 
 from flask import session
 
@@ -56,6 +57,21 @@ score_gauge = html.Div([
     ),
 ], style={'border-width': '5px', 'border-style': 'solid', 'width': '85%', 'position': 'relative'})
 
+score_graph = html.Div([
+    dcc.Graph(id='score-graph')
+])
+
+score_percent_graph = html.Div([
+    dcc.Graph(id='score-percent-graph')
+])
+
+duration_graph = html.Div([
+    dcc.Graph(id='duration-graph')
+])
+
+audits_graph = html.Div([
+    dcc.Graph(id='audits-graph')
+])
 
 # title of the sidebar
 sidebar_header = html.Div([
@@ -72,6 +88,5 @@ sidebar = html.Div([
 
 # main layout
 layout = html.Div([
-    sidebar,
-    score_gauge, location_map
+    sidebar, score_gauge, location_map, score_graph, score_percent_graph, duration_graph, audits_graph
 ], style={'display': 'flex', 'flex-wrap': 'wrap', 'width': '100%', 'height': '100%'})
