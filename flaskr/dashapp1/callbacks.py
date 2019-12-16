@@ -102,7 +102,7 @@ def register_callbacks(app):
         [Input(component_id='fake-input', component_property='value')]
     )
     def update_graph(value):
-        df = aggregate_pipelines.get_stats_by_x_days(30, session['user_id'])
+        df = aggregate_pipelines.get_stats_by_x_days(session['user_id'], 30)
         values = list(df.columns.values)
         return {"data": [
             go.Scatter(x=df[values[6]], y=df[values[2]], mode='lines+markers', name=update_string(values[2]),
@@ -120,7 +120,7 @@ def register_callbacks(app):
         [Input(component_id='fake-input', component_property='value')]
     )
     def update_graph(value):
-        df = aggregate_pipelines.get_stats_by_x_days(30, session['user_id'])
+        df = aggregate_pipelines.get_stats_by_x_days(session['user_id'], 30)
         values = list(df.columns.values)
         return {"data": [
             go.Scatter(x=df[values[6]], y=df[values[3]], mode='lines+markers', name=update_string(values[3]),
@@ -135,7 +135,7 @@ def register_callbacks(app):
         [Input(component_id='fake-input', component_property='value')]
     )
     def update_graph(value):
-        df = aggregate_pipelines.get_stats_by_x_days(30, session['user_id'])
+        df = aggregate_pipelines.get_stats_by_x_days(session['user_id'], 30)
         values = list(df.columns.values)
         return {"data": [
             go.Scatter(x=df[values[6]], y=df[values[1]], mode='lines+markers', name=update_string(values[1]),
@@ -150,7 +150,7 @@ def register_callbacks(app):
         [Input(component_id='fake-input', component_property='value')]
     )
     def update_graph(value):
-        df = aggregate_pipelines.get_stats_by_x_days(30, session['user_id'])
+        df = aggregate_pipelines.get_stats_by_x_days(session['user_id'], 30)
         values = list(df.columns.values)
         return {"data": [
             go.Scatter(x=df[values[6]], y=df[values[0]], mode='lines+markers', name=update_string(values[0]),
