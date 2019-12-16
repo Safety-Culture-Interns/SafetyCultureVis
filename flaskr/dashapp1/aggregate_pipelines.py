@@ -1,12 +1,74 @@
-from flask import session
-
 from flaskr import db
 import pandas as pd
 import pandas.io.json
 import datetime
 
 
-def get_stats_by_x_days(days_back, username):
+def get_avg_duration_dataframe(username, days_back):
+    db_collection = db.Audits().get_collection(username)
+    now = datetime.datetime.utcnow()
+    last_xd = now - datetime.timedelta(days=days_back)
+    pipeline1 = [
+        {
+            '$project': {
+
+                '_id': 0,
+                'duration': "$audit_data.duration",
+                'within_time': {'$gte': [{'$dateFromString': {'dateString': '$created_at'}}, last_xd]}
+
+            }
+        },
+        {
+            '$match': {'within_time': True}
+        },
+        {
+            '$group': {
+                '_id': None,
+                'duration': {
+                    '$avg': "$duration"
+                }
+
+            }
+        },
+        {
+            '$project': {'_id': 0,
+                         'duration': 1}
+        }
+    ]
+
+    average_duration = (pd.io.json.json_normalize(list(db_collection.aggregate(pipeline1))).get('duration').iloc[0])
+    print(average_duration)
+    if average_duration is not None:
+        average_duration /= 100
+
+    pipeline2 = [
+        {
+            '$project': {'_id': 0,
+                         'date': {'$substr': ["$modified_at", 0, 10]},
+                         'duration': '$audit_data.duration',
+                         'within_time': {'$gte': [{'$dateFromString': {'dateString': '$created_at'}}, last_xd]}
+                         }
+        },
+        {
+            '$match': {'within_time': True}
+        },
+        {
+            '$group': {'_id': '$date',
+                       'avg_duration': {'$avg': '$duration'}
+                       }
+        },
+        {
+            '$project': {
+                '_id': 0,
+                'date': '$_id',
+                'avg_duration_percent': {'$divide': ['$avg_duration', average_duration]}}
+        }
+
+    ]
+    return pd.io.json.json_normalize(list(db_collection.aggregate(pipeline2)))
+
+
+def get_stats_by_x_days(username, days_back):
     db_collection = db.Audits().get_collection(username)
     now = datetime.datetime.utcnow()
     last_xd = now - datetime.timedelta(days=days_back)
@@ -180,5 +242,6 @@ def get_map_dataframe(username):
 
     # test print result
 
+#
 # with pd.option_context('display.max_rows', None, 'display.max_columns', None):  # more options can be specified also
-#     print(get_stats_by_x_days(900))
+#     print(get_avg_duration_dataframe('matthew', 900))
