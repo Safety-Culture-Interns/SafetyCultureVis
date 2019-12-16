@@ -18,6 +18,13 @@ def update_string(attribute):
     return string.capwords(' '.join(attribute.split('_')), ' ')
 
 
+def create_line(df, values, x, y):
+    """creates a line in a line graph based on the parameters entered"""
+    return go.Scatter(x=df[values[x]], y=df[values[y]], mode='lines+markers', name=update_string(values[y]),
+                      line=dict(width=4), showlegend=True,
+                      marker={'size': 7, "opacity": 0.6})
+
+
 def register_callbacks(app):
     @app.callback(
         Output('map', 'figure'),
@@ -35,6 +42,7 @@ def register_callbacks(app):
             lat=df['Y'].get(mask),
             lon=df['X'].get(mask),
             text=df['Score'].astype(str) + ' percent',
+            hoverinfo='text',
             marker=dict(
                 color=df['Score'],
                 colorscale=scl,
@@ -42,7 +50,7 @@ def register_callbacks(app):
                 opacity=0.7,
                 size=15,
                 colorbar=dict(
-                    lenmode='fraction', len=0.94, thickness=40,
+                    lenmode='fraction', len=1, thickness=30,
                     titleside="right",
                     outlinecolor="rgba(68, 68, 68, 0)",
                     ticks="outside",
@@ -51,11 +59,11 @@ def register_callbacks(app):
                 )
             )
         )
-        return {'data': [trace], 'layout': go.Layout(
-            mapbox={'accesstoken': mapbox_access_token, 'bearing': 0,
-                    'center': {'lat': 38, 'lon': -94}, 'pitch': 0, 'zoom': 3,
-                    "style": 'mapbox://styles/mapbox/light-v9'}
-        )}
+        return {'data': [trace], 'layout': go.Layout(margin=dict(l=0, r=0, b=0, t=0),
+                                                     mapbox={'accesstoken': mapbox_access_token, 'bearing': 0,
+                                                             'center': {'lat': 0, 'lon': 0}, 'pitch': 0, 'zoom': 0,
+                                                             "style": 'mapbox://styles/mapbox/light-v9'}
+                                                     )}
 
     # callback from the Guage
     @app.callback([
@@ -113,67 +121,57 @@ def register_callbacks(app):
         return failed_style, failed_style, avg_style
 
     @app.callback(
-        Output(component_id='score-graph', component_property='figure'),
-        [Input(component_id='fake-input', component_property='value')]
+        Output('score-graph', 'figure'),
+        [Input('date-picker-range', 'start_date'),
+         Input('date-picker-range', 'end_date')]
     )
-    def update_graph(value):
-        df = aggregate_pipelines.get_stats_by_x_days(30, session['user_id'])
+    def update_graph(start_date, end_date):
+        days = len(pd.date_range(end=end_date, start=start_date).to_pydatetime().tolist())
+        df = aggregate_pipelines.get_stats_by_x_days(days, session['user_id'])
         values = list(df.columns.values)
-        return {"data": [
-            go.Scatter(x=df[values[6]], y=df[values[2]], mode='lines+markers', name=update_string(values[2]),
-                       marker={'size': 5, "opacity": 0.6,
-                               "line": {'width': 0.5}}, ),
-            go.Scatter(x=df[values[6]], y=df[values[4]], mode='lines+markers', name=update_string(values[4]),
-                       marker={'size': 5, "opacity": 0.6,
-                               "line": {'width': 0.5}}, )],
-            "layout": go.Layout(title="Average Scores",
-                                hovermode='closest'
-                                )}
+        return {"data": [create_line(df, values, 6, 2), create_line(df, values, 6, 4)],
+                "layout": go.Layout(title="Average Scores",
+                                    hovermode='closest'
+                                    )}
 
     @app.callback(
-        Output(component_id='score-percent-graph', component_property='figure'),
-        [Input(component_id='fake-input', component_property='value')]
+        Output('score-percent-graph', 'figure'),
+        [Input('date-picker-range', 'start_date'),
+         Input('date-picker-range', 'end_date')]
     )
-    def update_graph(value):
-        df = aggregate_pipelines.get_stats_by_x_days(30, session['user_id'])
+    def update_graph(start_date, end_date):
+        days = len(pd.date_range(end=end_date, start=start_date).to_pydatetime().tolist())
+        df = aggregate_pipelines.get_stats_by_x_days(days, session['user_id'])
         values = list(df.columns.values)
-        return {"data": [
-            go.Scatter(x=df[values[6]], y=df[values[3]], mode='lines+markers', name=update_string(values[3]),
-                       marker={'size': 5, "opacity": 0.6,
-                               "line": {'width': 0.5}}, )],
-            "layout": go.Layout(title="Average Score Percentage",
-                                hovermode='closest'
-                                )}
+        return {"data": [create_line(df, values, 6, 3)],
+                "layout": go.Layout(title="Average Score Percentage",
+                                    hovermode='closest'
+                                    )}
 
     @app.callback(
-        Output(component_id='duration-graph', component_property='figure'),
-        [Input(component_id='fake-input', component_property='value')]
+        Output('duration-graph', 'figure'),
+        [Input('date-picker-range', 'start_date'),
+         Input('date-picker-range', 'end_date')]
     )
-    def update_graph(value):
-        df = aggregate_pipelines.get_stats_by_x_days(30, session['user_id'])
+    def update_graph(start_date, end_date):
+        days = len(pd.date_range(end=end_date, start=start_date).to_pydatetime().tolist())
+        df = aggregate_pipelines.get_stats_by_x_days(days, session['user_id'])
         values = list(df.columns.values)
-        return {"data": [
-            go.Scatter(x=df[values[6]], y=df[values[1]], mode='lines+markers', name=update_string(values[1]),
-                       marker={'size': 5, "opacity": 0.6,
-                               "line": {'width': 0.5}}, )],
-            "layout": go.Layout(title="Average Audit Duration",
-                                hovermode='closest'
-                                )}
+        return {"data": [create_line(df, values, 6, 1)],
+                "layout": go.Layout(title="Average Audit Duration",
+                                    hovermode='closest'
+                                    )}
 
     @app.callback(
-        Output(component_id='audits-graph', component_property='figure'),
-        [Input(component_id='fake-input', component_property='value')]
+        Output('audits-graph', 'figure'),
+        [Input('date-picker-range', 'start_date'),
+         Input('date-picker-range', 'end_date')]
     )
-    def update_graph(value):
-        df = aggregate_pipelines.get_stats_by_x_days(30, session['user_id'])
+    def update_graph(start_date, end_date):
+        days = len(pd.date_range(end=end_date, start=start_date).to_pydatetime().tolist())
+        df = aggregate_pipelines.get_stats_by_x_days(days, session['user_id'])
         values = list(df.columns.values)
-        return {"data": [
-            go.Scatter(x=df[values[6]], y=df[values[0]], mode='lines+markers', name=update_string(values[0]),
-                       marker={'size': 5, "opacity": 0.6,
-                               "line": {'width': 0.5}}, ),
-            go.Scatter(x=df[values[6]], y=df[values[7]], mode='lines+markers', name=update_string(values[7]),
-                       marker={'size': 5, "opacity": 0.6,
-                               "line": {'width': 0.5}}, )],
-            "layout": go.Layout(title="Total vs Failed Audits",
-                                hovermode='closest'
-                                )}
+        return {"data": [create_line(df, values, 6, 0), create_line(df, values, 6, 7)],
+                "layout": go.Layout(title="Total vs Failed Audits",
+                                    hovermode='closest'
+                                    )}
