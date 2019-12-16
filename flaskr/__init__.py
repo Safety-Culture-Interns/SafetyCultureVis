@@ -37,8 +37,8 @@ def register_dashapps(app):
     dashapp1 = dash.Dash(__name__,
                          server=app,
                          url_base_pathname='/dashboard/',
-                         assets_folder=get_root_path(__name__) + '/static/',
-
+                         include_assets_files=True,
+                         assets_folder=os.getcwd()+'/static/',
                          meta_tags=[meta_viewport])
     with app.app_context():
         dashapp1.title = "Dashapp 1"
