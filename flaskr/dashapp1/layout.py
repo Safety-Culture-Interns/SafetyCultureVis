@@ -72,11 +72,16 @@ score_gauge = html.Div([
         value=0,
         showCurrentValue=True,
         units="%",
-        color={"gradient": True, "ranges": {"red": [0, 10], "yellow": [10, 20], "green": [20, 100]}},
-        label='Default',
+        color={"gradient": True, "ranges": {"red": [0, 60], "yellow": [60, 80], "green": [80, 100]}},
+        label='Account Health',
         max=100,
         min=0,
+        style={'color': 'black'}
     ),
+    html.Div([
+        html.Img(src='/dashboard/assets/Feeling-barometer.png',
+                 style={'height': '40px', 'width': 'auto', })
+    ], className='happyness'),
     html.Div([
         html.H6("Failed: 0%", id='total-failed', className='pretty_container five columns',
                 style={'margin': '10px auto', 'padding': '15px 0'}

@@ -374,3 +374,7 @@ div#score_guage {
     flex-direction: column;
     text-align: center;
 }
+.happyness{
+    margin-top: -50px;
+    margin-bottom: 25px;
+}
