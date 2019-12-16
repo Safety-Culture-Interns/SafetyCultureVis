@@ -3,6 +3,7 @@ import dash_bootstrap_components as dbc
 import dash_core_components as dcc
 import dash_daq as daq
 import datetime
+import plotly.graph_objects as go
 
 from flask import session
 
@@ -61,7 +62,24 @@ score_gauge = html.Div([
         max=100,
         min=0,
     ),
-], id='score_guage', className='pretty_container four columns')
+
+], id='score_guage', className='pretty_container four columns', style={'border-width': '5px', 'border-style': 'solid', 'width': '85%', 'position': 'relative'})
+
+score_graph = html.Div([
+    dcc.Graph(id='score-graph')
+])
+
+score_percent_graph = html.Div([
+    dcc.Graph(id='score-percent-graph')
+])
+
+duration_graph = html.Div([
+    dcc.Graph(id='duration-graph')
+])
+
+audits_graph = html.Div([
+    dcc.Graph(id='audits-graph')
+])
 
 # title of the sidebar
 sidebar_header = html.Div([
@@ -89,6 +107,7 @@ header = html.Div([
 
 # main layout
 layout = html.Div([
-    header,
-    map_health_bar
-], id='mainContainer')
+
+    header, map_health_bar, score_graph, score_percent_graph, duration_graph, audits_graph
+], id='mainContainer', style={'display': 'flex', 'flex-wrap': 'wrap', 'width': '100%', 'height': '100%'})
+
