@@ -44,14 +44,12 @@ def register_callbacks(app):
          Input('date-picker-range', 'end_date')])
     def select_date(start_date, end_date):
         """Displays map points alongside score percentage based on dates selected and sorting method"""
-        df = aggregate_pipelines.get_map_dataframe(session['user_id'])
-        values = list(df.columns.values)
-        mask = df['Created_at'].between(start_date, end_date)
+        df = aggregate_pipelines.get_map_dataframe(session['user_id'], start_date, end_date)
         g = geocoder.ip('me')
 
         trace = go.Scattermapbox(
-            lat=df['Y'].get(mask),
-            lon=df['X'].get(mask),
+            lat=df['Y'],
+            lon=df['X'],
             text=df['Score'].astype(str) + ' percent',
             hoverinfo='text',
             marker=dict(
