@@ -2,6 +2,7 @@ import requests
 
 from flaskr import db
 from threading import Thread
+import time
 
 
 class API:
@@ -78,18 +79,35 @@ class API:
             self.MongoDB.write_one_to_mongodb(item)
 
         def thread():
+            max_request = 190
+            amount = len(audit_ids)
             count = 0
             threads = list()
             if len(audit_ids) == 0:
                 yield 100
-            for i in range(len(audit_ids)):
+            while amount > max_request:
+
+                for i in range(max_request):
+                    t = Thread(target=do_a_bunch, args=(i,))
+                    threads.append(t)
+                    t.start()
+                amount = amount - max_request
+                for index, thread in enumerate(threads):
+                    thread.join()
+                    count += 1
+                    print(count)
+                    yield (count / len(audit_ids)) * 100
+                print("sleeping")
+                time.sleep(60)
+            for i in range(len(audit_ids) - count):
                 t = Thread(target=do_a_bunch, args=(i,))
                 threads.append(t)
                 t.start()
             for index, thread in enumerate(threads):
                 thread.join()
                 count += 1
-                yield (count/len(audit_ids))*100
+                print(count)
+                yield (count / len(audit_ids)) * 100
 
         for done_thread in thread():
             yield done_thread

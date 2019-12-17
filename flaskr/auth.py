@@ -3,7 +3,6 @@ from flask import (
     Blueprint, flash, g, redirect, render_template, request, session, url_for
 )
 from flaskr import db, APISync
-from flaskr.dashapp1 import aggregate_pipelines
 
 bp = Blueprint('auth', __name__, url_prefix='/auth')
 
@@ -30,7 +29,11 @@ def register():
         elif db.Users().user_exists(username):
             error = 'User {} is already registered.'.format(username)
         elif not APISync.API().is_good_api_token(api):
-            error = 'Token {} was not accepted.'
+            error = 'Token {} was not accepted.'.format(api)
+        elif not is_good_credential(username):
+            error = 'Username must be 8 characters long, and include a number'
+        elif not is_good_credential(password):
+            error = 'Password must be 8 characters long, and include a number'
         if error is None:
             db.Users().add_user(username, password, api)
             return redirect(url_for('auth.login'))
@@ -96,3 +99,10 @@ def login_required(view):
         return view(**kwargs)
 
     return wrapped_view
+
+
+def is_good_credential(credential):
+    if len(credential) < 8:
+        return False
+    else:
+        return any(char.isdigit() for char in credential)

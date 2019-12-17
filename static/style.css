@@ -378,3 +378,6 @@ div#score_guage {
     margin-top: -50px;
     margin-bottom: 25px;
 }
+td.CalendarDay {
+  padding: 0;
+}

@@ -300,4 +300,4 @@ def get_map_dataframe(username):
 
 #
 with pd.option_context('display.max_rows', None, 'display.max_columns', None):  # more options can be specified also
-    print(get_stats_by_x_days('matthew', '2016-11-18', '2018-11-18'))
+    print(get_failed_report_dataframe('matthew2', '2019-11-18', '2019-12-17'))

@@ -29,14 +29,12 @@ def register_callbacks(app):
     @app.callback(
         Output('map', 'figure'),
         [Input('date-picker-range', 'start_date'),
-         Input('date-picker-range', 'end_date'),
-         Input('date-sort', 'value')])
-    def select_date(start_date, end_date, sorting_method):
+         Input('date-picker-range', 'end_date')])
+    def select_date(start_date, end_date):
         """Displays map points alongside score percentage based on dates selected and sorting method"""
         df = aggregate_pipelines.get_map_dataframe(session['user_id'])
         values = list(df.columns.values)
-        df[sorting_method] = pd.to_datetime(df[sorting_method or 'Created_at'])
-        mask = df[sorting_method].between(start_date, end_date)
+        mask = df['Created_at'].between(start_date, end_date)
         g = geocoder.ip('me')
 
         trace = go.Scattermapbox(
@@ -80,13 +78,19 @@ def register_callbacks(app):
         data = aggregate_pipelines.get_failed_report_dataframe(session['user_id'], start_date, end_date)
         score_percentage = round(
             aggregate_pipelines.get_average_score_percentage(session['user_id'], start_date, end_date))
-        failed = data['count'][0]
-        passed = data['count'][1]  # will make smaller once we have all the information we need.
+        try:
+            failed = data['count'][0]
+        except KeyError:
+            failed = 0
+        try:
+            passed = data['count'][1]
+        except KeyError:
+            passed = 0
         total = failed + passed
         percentage_failed = round((failed / total) * 100)
         percentage_passed = round((passed / total) * 100)
-        acount_health = (score_percentage / 2.5) + (percentage_passed / 1.5)
-        return acount_health, 'Incomplete Audits: {}%'.format(percentage_failed), 'Complete Audits: {}%'.format(
+        account_health = (score_percentage / 2.5) + (percentage_passed / 1.5)
+        return account_health, 'Incomplete Audits: {}%'.format(percentage_failed), 'Complete Audits: {}%'.format(
             percentage_passed), 'Avg Audit Score: {}%'.format(score_percentage), 'Total Audits: {}'.format(total)
 
     @app.callback([
@@ -100,8 +104,14 @@ def register_callbacks(app):
         data = aggregate_pipelines.get_failed_report_dataframe(session['user_id'], start_date, end_date)
         score_percentage = round(
             aggregate_pipelines.get_average_score_percentage(session['user_id'], start_date, end_date))
-        failed = data['count'][0]
-        passed = data['count'][1]
+        try:
+            failed = data['count'][0]
+        except KeyError:
+            failed = 0
+        try:
+            passed = data['count'][1]
+        except KeyError:
+            passed = 0
         total = failed + passed
         percentage_failed = round((failed / total) * 100)
         percentage_passed = round((passed / total) * 100)
