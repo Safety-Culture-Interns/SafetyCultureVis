@@ -72,6 +72,8 @@ def get_stats_by_x_days(username, start_date, end_date):
     db_collection = db.Audits().get_collection(username)
     start_datetime = datetime.datetime(int(start_date[0:4]), int(start_date[5:7]), int(start_date[8:10]))
     end_datetime = datetime.datetime(int(end_date[0:4]), int(end_date[5:7]), int(end_date[8:10]))
+    print(start_datetime)
+    print(end_datetime)
     pipeline = [
         {
             '$project': {
@@ -84,8 +86,8 @@ def get_stats_by_x_days(username, start_date, end_date):
                 'failed': {'$cond': [{'$eq': ['$audit_data.date_completed', None]}, 1, 0]},
                 'completed': {'$cond': [{'$eq': ['$audit_data.date_completed', None]}, 0, 1]},
                 'date': {'$substr': ["$modified_at", 0, 10]},
-                'within_start_date': {'$gte': [{'$dateFromString': {'dateString': '$created_at'}}, start_datetime]},
-                'within_end_date': {'$lte': [{'$dateFromString': {'dateString': '$created_at'}}, end_datetime]}
+                'within_start_date': {'$gte': [{'$dateFromString': {'dateString': '$modified_at'}}, start_datetime]},
+                'within_end_date': {'$lte': [{'$dateFromString': {'dateString': '$modified_at'}}, end_datetime]}
 
             }
         },
@@ -142,8 +144,8 @@ def get_average_score_percentage(username, start_date, end_date):
         {
             '$project': {
                 'score_percentage': "$audit_data.score_percentage",
-                'within_start_date': {'$gte': [{'$dateFromString': {'dateString': '$created_at'}}, start_datetime]},
-                'within_end_date': {'$lte': [{'$dateFromString': {'dateString': '$created_at'}}, end_datetime]}
+                'within_start_date': {'$gte': [{'$dateFromString': {'dateString': '$modified_at'}}, start_datetime]},
+                'within_end_date': {'$lte': [{'$dateFromString': {'dateString': '$modified_at'}}, end_datetime]}
             }
 
         },
@@ -238,8 +240,8 @@ def get_failed_report_dataframe(username, start_date, end_date):
                          'array_values': {
                              '$cond': [{'$eq': ['$audit_data.date_completed', None]}, 'failed', 'completed']},
                          'within_start_date': {
-                             '$gte': [{'$dateFromString': {'dateString': '$created_at'}}, start_datetime]},
-                         'within_end_date': {'$lte': [{'$dateFromString': {'dateString': '$created_at'}}, end_datetime]}
+                             '$gte': [{'$dateFromString': {'dateString': '$modified_at'}}, start_datetime]},
+                         'within_end_date': {'$lte': [{'$dateFromString': {'dateString': '$modified_at'}}, end_datetime]}
                          }
         },
         {
@@ -298,4 +300,4 @@ def get_map_dataframe(username):
 
 #
 with pd.option_context('display.max_rows', None, 'display.max_columns', None):  # more options can be specified also
-    print(get_failed_report_dataframe('matthew', '2018-12-16', '2019-12-16'))
+    print(get_stats_by_x_days('matthew', '2016-11-18', '2018-11-18'))
