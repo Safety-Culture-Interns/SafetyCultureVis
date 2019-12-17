@@ -79,7 +79,7 @@ class API:
             self.MongoDB.write_one_to_mongodb(item)
 
         def thread():
-            max_request = 190
+            max_request = 200
             amount = len(audit_ids)
             count = 0
             threads = list()
@@ -97,7 +97,6 @@ class API:
                     count += 1
                     print(count)
                     yield (count / len(audit_ids)) * 100
-                print("sleeping")
                 time.sleep(60)
             for i in range(len(audit_ids) - count):
                 t = Thread(target=do_a_bunch, args=(i,))
@@ -106,7 +105,6 @@ class API:
             for index, thread in enumerate(threads):
                 thread.join()
                 count += 1
-                print(count)
                 yield (count / len(audit_ids)) * 100
 
         for done_thread in thread():

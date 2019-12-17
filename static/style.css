@@ -374,10 +374,23 @@ div#score_guage {
     flex-direction: column;
     text-align: center;
 }
-.happyness{
+
+.happyness {
     margin-top: -50px;
     margin-bottom: 25px;
 }
+
 td.CalendarDay {
-  padding: 0;
+    padding: 0;
+}
+
+.iauditor-icon {
+    height: 60px;
+    width: auto;
+    margin-bottom: 25px
+}
+
+.loading-screen {
+    padding: 20px;
+    border-radius: 5px;
 }
