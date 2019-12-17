@@ -1,0 +1,391 @@
+* {
+    box-sizing: border-box;
+}
+
+*:focus {
+    outline: none;
+}
+
+.login {
+    margin: 20px auto;
+    width: 300px;
+}
+
+.sign-up {
+    margin: 0 auto;
+    width: 300px;
+}
+
+.login-screen {
+    background-color: #FFF;
+    padding: 20px;
+    border-radius: 5px
+}
+
+.sign-up-screen {
+    background-color: #FFF;
+    padding: 0 20px;
+    border-radius: 5px
+}
+
+.app-title {
+    text-align: center;
+    color: #777;
+}
+
+.login-form {
+    text-align: center;
+}
+
+.control-group {
+    margin-bottom: 10px;
+}
+
+input {
+    text-align: center;
+    background-color: #ECF0F1;
+    border: 2px solid transparent;
+    border-radius: 3px;
+    font-size: 16px;
+    font-weight: 200;
+    padding: 10px 0;
+    width: 250px;
+    transition: border .5s;
+}
+
+input:focus {
+    border: 2px solid #3498DB;
+    box-shadow: none;
+}
+
+.btn {
+    border: 2px solid transparent;
+    background: #3498DB;
+    color: #ffffff;
+    font-size: 16px;
+    line-height: 25px;
+    padding: 10px 0;
+    text-decoration: none;
+    text-shadow: none;
+    border-radius: 3px;
+    box-shadow: none;
+    transition: 0.25s;
+    display: block;
+    width: 250px;
+    margin: 0 auto;
+}
+
+.btn:hover {
+    background-color: #2980B9;
+}
+
+.login-link {
+    font-size: 12px;
+    color: #444;
+    display: block;
+    margin-top: 12px;
+}
+
+body {
+    margin: 5%;
+    background-color: #f2f2f2;
+    font-family: "Open Sans", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+h1 {
+    margin: 1rem 0;
+    color: black;
+}
+
+a {
+    color: #377ba8;
+}
+
+hr {
+    border: none;
+    border-top: 1px solid lightgray;
+}
+
+nav {
+    display: flex;
+    align-items: center;
+    padding: 0 0.5rem;
+}
+
+nav h1 {
+    flex: auto;
+    margin: 0;
+}
+
+nav h1 a {
+    text-decoration: none;
+    padding: 0.25rem 0.5rem;
+}
+
+nav ul {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+nav ul li a, nav ul li span, header .action {
+    display: block;
+    padding: 0.5rem;
+}
+
+.content {
+    padding: 0 1rem 1rem;
+}
+
+.content > header {
+    display: flex;
+    align-items: flex-end;
+}
+
+.content > header h1 {
+    flex: auto;
+    margin: 1rem 0 0.25rem 0;
+}
+
+.flash {
+    margin: 1em 0;
+    padding: 1em;
+    background: #cae6f6;
+    border: 1px solid #377ba8;
+}
+
+.post > header {
+    display: flex;
+    align-items: flex-end;
+    font-size: 0.85em;
+}
+
+.post > header > div:first-of-type {
+    flex: auto;
+}
+
+.post > header h1 {
+    font-size: 1.5em;
+    margin-bottom: 0;
+}
+
+.post .about {
+    color: slategray;
+    font-style: italic;
+}
+
+.post .body {
+    white-space: pre-line;
+}
+
+.content:last-child {
+    margin-bottom: 0;
+}
+
+.content form {
+    margin: 1em 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.content label {
+    font-weight: bold;
+    margin-bottom: 0.5em;
+}
+
+.content input, .content textarea {
+    margin-bottom: 1em;
+}
+
+.content textarea {
+    min-height: 12em;
+    resize: vertical;
+}
+
+input.danger {
+    color: #cc2f2e;
+}
+
+input[type=submit] {
+    align-self: start;
+    min-width: 10em;
+}
+
+.loader {
+    margin: 0 auto;
+    border: 16px solid #f3f3f3; /* Light grey */
+    border-top: 16px solid #3498db; /* Blue */
+    border-radius: 50%;
+    width: 120px;
+    height: 120px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+#mainContainer {
+    display: flex;
+    flex-direction: column;
+}
+
+.js-plotly-plot .plotly .modebar {
+    padding-top: 5%;
+    margin-right: 3.5%;
+}
+
+body {
+    background-color: #f2f2f2;
+    margin: 5%;
+}
+
+.two.columns {
+    width: 16.25%;
+}
+
+.column,
+.columns {
+    margin-left: 0.5%;
+}
+
+.pretty_container {
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    margin: 10px;
+    padding: 15px;
+    position: relative;
+    box-shadow: 2px 2px 2px lightgrey;
+}
+
+.bare_container {
+    margin: 0 0 0 0;
+    padding: 0 0 0 0;
+}
+
+.rc-slider {
+    margin-left: 0px;
+    padding-left: 0px;
+}
+
+.flex-display {
+    display: flex;
+}
+
+.container-display {
+    display: flex;
+}
+
+#individual_graph,
+#aggregate_graph {
+    width: calc(100% - 30px);
+    position: absolute;
+}
+
+#count_graph {
+    position: absolute;
+    height: calc(100% - 30px);
+    width: calc(100% - 30px);
+}
+
+#countGraphContainer {
+    flex: 5;
+    position: relative;
+}
+
+#header {
+    align-items: center;
+}
+
+#learn-more-button {
+    text-align: center;
+    height: 100%;
+    padding: 0 20px;
+    text-transform: none;
+    font-size: 15px;
+    float: right;
+    margin-right: 10px;
+    margin-top: 30px;
+}
+
+#title {
+    text-align: center;
+}
+
+.mini_container {
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    margin: 10px;
+    padding: 15px;
+    position: relative;
+    box-shadow: 2px 2px 2px lightgrey;
+}
+
+#right-column {
+    display: flex;
+    flex-direction: column;
+}
+
+#wells {
+    flex: 1;
+}
+
+#gas {
+    flex: 1;
+}
+
+#aggregate_data {
+    align-items: center;
+}
+
+#oil {
+    flex: 1;
+}
+
+#water {
+    flex: 1;
+}
+
+#tripleContainer {
+    display: flex;
+    flex: 3;
+}
+
+a.logout_button {
+    text-decoration: none;
+    padding: 15px;
+}
+
+.inside_pretty_container {
+    height: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    background-color: #fff;
+}
+
+div#score_guage {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+}
+
+.happyness {
+    margin-top: -50px;
+    margin-bottom: 25px;
+}
+
+.iauditor-icon {
+    height: 60px;
+    width: auto;
+    margin-bottom: 25px
+}
+.loading-screen {
+    padding: 20px;
+    border-radius: 5px;
+}

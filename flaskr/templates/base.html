@@ -6,7 +6,7 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
 <nav>
-    <h1>Flaskr</h1>
+    <h1><img src="{{ url_for('static', filename='iauditor-badge.png') }}" class="iauditor-icon"></h1>
     <ul>
         {% if g.user %}
         <li><span>{{ g.user['username'] }}</span>
