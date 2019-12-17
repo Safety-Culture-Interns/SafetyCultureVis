@@ -18,9 +18,21 @@ def update_string(attribute):
     return string.capwords(' '.join(attribute.split('_')), ' ')
 
 
-def create_line(df, values, x, y):
+def fill_data(df, start_date, end_date, y):
+    """Creates a new dataframe in a specified daterange, filling any dates that have no value with 0"""
+    series = pd.Series(dict(zip(df['date'], df[y])))
+    series.index = pd.DatetimeIndex(series.index)
+    series = series.reindex(pd.date_range(pd.to_datetime(start_date).date(), pd.to_datetime(end_date).date()),
+                            fill_value=0)
+
+    filled_dataframe = pd.DataFrame({update_string(y): series})
+    return filled_dataframe.reset_index(inplace=False)
+
+
+def create_line(df):
     """creates a line in a line graph based on the parameters entered"""
-    return go.Scatter(x=df[values[x]], y=df[values[y]], mode='lines+markers', name=update_string(values[y]),
+    columns = list(df.columns.values)
+    return go.Scatter(x=df[columns[0]], y=df[columns[1]], mode='lines+markers', name=columns[1],
                       line=dict(width=4), showlegend=True,
                       marker={'size': 7, "opacity": 0.6})
 
@@ -148,8 +160,8 @@ def register_callbacks(app):
     )
     def update_graph(start_date, end_date):
         df = aggregate_pipelines.get_stats_by_x_days(session['user_id'], start_date, end_date)
-        values = list(df.columns.values)
-        return {"data": [create_line(df, values, 6, 2), create_line(df, values, 6, 4)],
+        return {"data": [create_line(fill_data(df, start_date, end_date, 'avg_score')),
+                         create_line(fill_data(df, start_date, end_date, 'avg_total_score'))],
                 "layout": go.Layout(title="Average Scores",
                                     hovermode='closest'
                                     )}
@@ -161,8 +173,7 @@ def register_callbacks(app):
     )
     def update_graph(start_date, end_date):
         df = aggregate_pipelines.get_stats_by_x_days(session['user_id'], start_date, end_date)
-        values = list(df.columns.values)
-        return {"data": [create_line(df, values, 6, 3)],
+        return {"data": [create_line(fill_data(df, start_date, end_date, 'avg_score_percentage'))],
                 "layout": go.Layout(title="Average Score Percentage",
                                     hovermode='closest'
                                     )}
@@ -174,8 +185,7 @@ def register_callbacks(app):
     )
     def update_graph(start_date, end_date):
         df = aggregate_pipelines.get_stats_by_x_days(session['user_id'], start_date, end_date)
-        values = list(df.columns.values)
-        return {"data": [create_line(df, values, 6, 1)],
+        return {"data": [create_line(fill_data(df, start_date, end_date, 'avg_duration'))],
                 "layout": go.Layout(title="Average Audit Duration",
                                     hovermode='closest'
                                     )}
@@ -187,8 +197,8 @@ def register_callbacks(app):
     )
     def update_graph(start_date, end_date):
         df = aggregate_pipelines.get_stats_by_x_days(session['user_id'], start_date, end_date)
-        values = list(df.columns.values)
-        return {"data": [create_line(df, values, 6, 0), create_line(df, values, 6, 7)],
+        return {"data": [create_line(fill_data(df, start_date, end_date, 'audits')),
+                         create_line(fill_data(df, start_date, end_date, 'failed_audits'))],
                 "layout": go.Layout(title="Total vs Failed Audits",
                                     hovermode='closest'
                                     )}

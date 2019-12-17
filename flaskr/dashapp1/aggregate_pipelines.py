@@ -4,76 +4,14 @@ import pandas.io.json
 import datetime
 
 
-def get_avg_duration_dataframe(username, days_back):
-    db_collection = db.Audits().get_collection(username)
-    now = datetime.datetime.utcnow()
-    last_xd = now - datetime.timedelta(days=days_back)
-    pipeline1 = [
-        {
-            '$project': {
-
-                '_id': 0,
-                'duration': "$audit_data.duration",
-                'within_time': {'$gte': [{'$dateFromString': {'dateString': '$created_at'}}, last_xd]}
-
-            }
-        },
-        {
-            '$match': {'within_time': True}
-        },
-        {
-            '$group': {
-                '_id': None,
-                'duration': {
-                    '$avg': "$duration"
-                }
-
-            }
-        },
-        {
-            '$project': {'_id': 0,
-                         'duration': 1}
-        }
-    ]
-
-    average_duration = (pd.io.json.json_normalize(list(db_collection.aggregate(pipeline1))).get('duration').iloc[0])
-    print(average_duration)
-    if average_duration is not None:
-        average_duration /= 100
-
-    pipeline2 = [
-        {
-            '$project': {'_id': 0,
-                         'date': {'$substr': ["$modified_at", 0, 10]},
-                         'duration': '$audit_data.duration',
-                         'within_time': {'$gte': [{'$dateFromString': {'dateString': '$created_at'}}, last_xd]}
-                         }
-        },
-        {
-            '$match': {'within_time': True}
-        },
-        {
-            '$group': {'_id': '$date',
-                       'avg_duration': {'$avg': '$duration'}
-                       }
-        },
-        {
-            '$project': {
-                '_id': 0,
-                'date': '$_id',
-                'avg_duration_percent': {'$divide': ['$avg_duration', average_duration]}}
-        }
-
-    ]
-    return pd.io.json.json_normalize(list(db_collection.aggregate(pipeline2)))
-
-
 def get_stats_by_x_days(username, start_date, end_date):
+    """ Returns a dataframe with the date, total audits, total uncompleted audits, total completed audits,
+    average score, average total score, average score percentage, average duration and percent of audits completed
+    in a given date range
+    """
     db_collection = db.Audits().get_collection(username)
     start_datetime = datetime.datetime(int(start_date[0:4]), int(start_date[5:7]), int(start_date[8:10]))
     end_datetime = datetime.datetime(int(end_date[0:4]), int(end_date[5:7]), int(end_date[8:10]))
-    print(start_datetime)
-    print(end_datetime)
     pipeline = [
         {
             '$project': {
@@ -137,6 +75,8 @@ def get_stats_by_x_days(username, start_date, end_date):
 
 
 def get_average_score_percentage(username, start_date, end_date):
+    """ Returns a number of the average score percentage of the audits in a date range
+    """
     db_collection = db.Audits().get_collection(username)
     start_datetime = datetime.datetime(int(start_date[0:4]), int(start_date[5:7]), int(start_date[8:10]))
     end_datetime = datetime.datetime(int(end_date[0:4]), int(end_date[5:7]), int(end_date[8:10]))
@@ -177,60 +117,10 @@ def get_average_score_percentage(username, start_date, end_date):
     return pd.io.json.json_normalize(list(db_collection.aggregate(pipeline))).get('avg_score_percentage').iloc[0]
 
 
-def get_stats_by_day_dataframe(username):
-    db_collection = db.Audits().get_collection(username)
-    pipeline = [
-        {
-            '$project': {
-                '_id': 0,
-                'score': '$audit_data.score',
-                'total_score': '$audit_data.total_score',
-                'score_percentage': '$audit_data.score_percentage',
-                'duration': '$audit_data.duration',
-                'date': {'$substr': ["$modified_at", 0, 10]},
-                'failed': {'$cond': [{'$eq': ['$audit_data.date_completed', None]}, 1, 0]},
-                'completed': {'$cond': [{'$eq': ['$audit_data.date_completed', None]}, 0, 1]}
-            }
-        },
-        {
-            '$group': {
-                '_id': '$date',
-                'audits': {'$sum': 1},
-                'failed_audits': {'$sum': '$failed'},
-                'completed_audits': {'$sum': '$completed'},
-                'avg_score': {'$avg': '$score'},
-                'avg_total_score': {'$avg': '$total_score'},
-                'avg_score_percentage': {'$avg': '$score_percentage'},
-                'avg_duration': {'$avg': '$duration'},
-            }
-        }
-    ]
-    # use the pipeline to make a list from the aggregate cursor, then convert to a dataframe
-    return pd.io.json.json_normalize(list(db_collection.aggregate(pipeline)))
-
-
-def get_last_x_days_dataframe(username):
-    db_collection = db.Audits().get_collection(username)
-    now = datetime.datetime.utcnow()
-    last_30d = now - datetime.timedelta(days=30)
-    print(last_30d)
-    pipeline = [
-        {
-            '$project': {'_id': 0, 'created_at': 1, 'array_values': {
-                '$gte': [{'$dateFromString': {'dateString': '$created_at'}}, last_30d]}
-                         }
-        },
-        {
-            '$match': {'array_values': True}
-        }
-
-    ]
-
-    # use the pipeline to make a list from the aggregate cursor, then convert to a dataframe
-    return pd.io.json.json_normalize(list(db_collection.aggregate(pipeline)))
-
-
+# Returns
 def get_failed_report_dataframe(username, start_date, end_date):
+    """ Returns a dataframe with the count of the uncompleted audits within a date range
+    """
     db_collection = db.Audits().get_collection(username)
     start_datetime = datetime.datetime(int(start_date[0:4]), int(start_date[5:7]), int(start_date[8:10]))
     end_datetime = datetime.datetime(int(end_date[0:4]), int(end_date[5:7]), int(end_date[8:10]))
@@ -241,7 +131,8 @@ def get_failed_report_dataframe(username, start_date, end_date):
                              '$cond': [{'$eq': ['$audit_data.date_completed', None]}, 'failed', 'completed']},
                          'within_start_date': {
                              '$gte': [{'$dateFromString': {'dateString': '$modified_at'}}, start_datetime]},
-                         'within_end_date': {'$lte': [{'$dateFromString': {'dateString': '$modified_at'}}, end_datetime]}
+                         'within_end_date': {
+                             '$lte': [{'$dateFromString': {'dateString': '$modified_at'}}, end_datetime]}
                          }
         },
         {
@@ -264,6 +155,10 @@ def get_failed_report_dataframe(username, start_date, end_date):
 
 
 def get_map_dataframe(username):
+    """ Returns a dataframe with the dates created at, modified at, completed at, score percentage, x and y coordinates
+    that have a point location
+    """
+
     db_collection = db.Audits().get_collection(username)
     pipeline = [
         {
@@ -296,8 +191,7 @@ def get_map_dataframe(username):
     return pd.io.json.json_normalize(list(db_collection.aggregate(pipeline)))
 
     # test print result
-
-
 #
-with pd.option_context('display.max_rows', None, 'display.max_columns', None):  # more options can be specified also
-    print(get_failed_report_dataframe('matthew2', '2019-11-18', '2019-12-17'))
+# with pd.option_context('display.max_rows', None, 'display.max_columns', None):  # more options can be specified also
+#     print(get_map_dataframe('matthew'))
+
