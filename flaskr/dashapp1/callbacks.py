@@ -3,9 +3,8 @@ from dash.dependencies import Input, Output
 import plotly.graph_objects as go
 from flask import session
 import string
-import datetime
-
 from . import aggregate_pipelines
+import geocoder
 
 scl = [0, "rgb(242, 51, 242)"], [0.125, "rgb(0, 0, 200)"], [0.25, "rgb(0, 25, 255)"], \
       [0.375, "rgb(0, 152, 255)"], [0.5, "rgb(44, 255, 150)"], [0.625, "rgb(151, 255, 0)"], \
@@ -50,6 +49,7 @@ def register_callbacks(app):
         values = list(df.columns.values)
         df[sorting_method] = pd.to_datetime(df[sorting_method or 'Created_at'])
         mask = df[sorting_method].between(start_date, end_date)
+        g = geocoder.ip('me')
 
         trace = go.Scattermapbox(
             lat=df['Y'].get(mask),
@@ -74,7 +74,8 @@ def register_callbacks(app):
         )
         return {'data': [trace], 'layout': go.Layout(margin=dict(l=0, r=0, b=0, t=0),
                                                      mapbox={'accesstoken': mapbox_access_token, 'bearing': 0,
-                                                             'center': {'lat': 0, 'lon': 0}, 'pitch': 0, 'zoom': 0,
+                                                             'center': {'lat': g.latlng[0], 'lon': g.latlng[1]},
+                                                             'pitch': 0, 'zoom': 2,
                                                              "style": 'mapbox://styles/mapbox/light-v9'}
                                                      )}
 
@@ -83,35 +84,40 @@ def register_callbacks(app):
         Output('my-gauge', 'value'),
         Output('total-failed', 'children'),
         Output('total-passed', 'children'),
-        Output('avg-score', 'children')],
+        Output('avg-score', 'children'),
+        Output('total-audits', 'children')],
         [Input('date-picker-range', 'start_date'),
          Input('date-picker-range', 'end_date')])
     def update_output(start_date, end_date):
-        data = aggregate_pipelines.get_failed_report_dataframe(session['user_id'])
-        score_percentage = round(aggregate_pipelines.get_average_score_percentage(session['user_id']))
+        data = aggregate_pipelines.get_failed_report_dataframe(session['user_id'], start_date, end_date)
+        score_percentage = round(
+            aggregate_pipelines.get_average_score_percentage(session['user_id'], start_date, end_date))
         failed = data['count'][0]
         passed = data['count'][1]  # will make smaller once we have all the information we need.
         total = failed + passed
         percentage_failed = round((failed / total) * 100)
         percentage_passed = round((passed / total) * 100)
-        style = {'background-color': 'red'}
-        return percentage_passed, 'Failed: {}%'.format(percentage_failed), 'Passed: {}%'.format(
-            percentage_passed), 'Avg Score: {}%'.format(score_percentage)
+        acount_health = (score_percentage / 2.5) + (percentage_passed / 1.5)
+        return acount_health, 'Incomplete Audits: {}%'.format(percentage_failed), 'Complete Audits: {}%'.format(
+            percentage_passed), 'Avg Audit Score: {}%'.format(score_percentage), 'Total Audits: {}'.format(total)
 
     @app.callback([
         Output('total-failed', 'style'),
         Output('total-passed', 'style'),
-        Output('avg-score', 'style')],
+        Output('avg-score', 'style'),
+        Output('total-audits', 'style')],
         [Input('date-picker-range', 'start_date'),
          Input('date-picker-range', 'end_date')])
     def update_output(start_date, end_date):
-        data = aggregate_pipelines.get_failed_report_dataframe(session['user_id'])
-        score_percentage = round(aggregate_pipelines.get_average_score_percentage(session['user_id']))
+        data = aggregate_pipelines.get_failed_report_dataframe(session['user_id'], start_date, end_date)
+        score_percentage = round(
+            aggregate_pipelines.get_average_score_percentage(session['user_id'], start_date, end_date))
         failed = data['count'][0]
         passed = data['count'][1]
         total = failed + passed
         percentage_failed = round((failed / total) * 100)
         percentage_passed = round((passed / total) * 100)
+        total_style = {'margin': '10px auto', 'padding': '15px 0', }
         failed_style = {'margin': '10px auto', 'padding': '15px 0', }
         avg_style = {'margin': '10px auto', 'padding': '15px 0', }
         if percentage_failed >= 50:
@@ -130,8 +136,12 @@ def register_callbacks(app):
             avg_style['background-color'] = 'rgba(255, 247, 0, 0.36)'  # yellow
         else:
             avg_style['background-color'] = 'rgba(133, 255, 0, 0.25)'  # green
+        if total < 1:
+            total_style['background-color'] = 'rgba(255, 0, 0, 0.18)'  # red
+        else:
+            total_style['background-color'] = 'rgba(133, 255, 0, 0.25)'  # green
 
-        return failed_style, failed_style, avg_style
+        return failed_style, failed_style, avg_style, total_style
 
     @app.callback(
         Output('score-graph', 'figure'),

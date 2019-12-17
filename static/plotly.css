@@ -709,3 +709,9 @@ there.
 /* Larger than Desktop HD */
 @media (min-width: 1200px) {
 }
+
+.eYbLCt {
+    display: block;
+    font-size: 2rem !important;
+    margin-bottom: 8px;
+}

@@ -76,22 +76,22 @@ score_gauge = html.Div([
         label='Account Health',
         max=100,
         min=0,
-        style={'color': 'black'}
+        style={'color': 'black', 'font-size': '2rem'}
     ),
     html.Div([
         html.Img(src='/dashboard/assets/Feeling-barometer.png',
                  style={'height': '40px', 'width': 'auto', })
     ], className='happyness'),
     html.Div([
-        html.H6("Failed: 0%", id='total-failed', className='pretty_container five columns',
+        html.H6("Incomplete Audits: 0%", id='total-failed', className='pretty_container five columns',
                 style={'margin': '10px auto', 'padding': '15px 0'}
                 ),
-        html.H6('Passed: 0%', id='total-passed', className='pretty_container five columns',
+        html.H6('Complete Audits: 0%', id='total-passed', className='pretty_container five columns',
                 style={'margin': '10px auto', 'padding': '15px 0'}),
-        html.H6("Avg Score: 0%", id='avg-score', className='pretty_container five columns',
+        html.H6("Avg Audit Score: 0%", id='avg-score', className='pretty_container five columns',
                 style={'margin': '10px auto', 'padding': '15px 0'},
                 ),
-        html.H6('Total Passed: 0', id='total-p', className='pretty_container five columns',
+        html.H6('Total Audits: 0', id='total-audits', className='pretty_container five columns',
                 style={'margin': '10px auto', 'padding': '15px 0'})
     ], className='inside_pretty_container')
 ], id='score_guage', className='pretty_container four columns')
