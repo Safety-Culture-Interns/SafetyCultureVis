@@ -55,7 +55,7 @@ def register_callbacks(app):
             text=df['Score'].astype(str) + ' percent',
             hoverinfo='text',
             marker=dict(
-                color=df['Score'],
+                color=df['Score'].append(pd.Series(100)),
                 colorscale=scl,
                 reversescale=True,
                 opacity=0.7,
@@ -83,29 +83,7 @@ def register_callbacks(app):
         Output('total-failed', 'children'),
         Output('total-passed', 'children'),
         Output('avg-score', 'children'),
-        Output('total-audits', 'children')],
-        [Input('date-picker-range', 'start_date'),
-         Input('date-picker-range', 'end_date')])
-    def update_output(start_date, end_date):
-        data = aggregate_pipelines.get_failed_report_dataframe(session['user_id'], start_date, end_date)
-        score_percentage = round(
-            aggregate_pipelines.get_average_score_percentage(session['user_id'], start_date, end_date))
-        try:
-            failed = data['count'][0]
-        except KeyError:
-            failed = 0
-        try:
-            passed = data['count'][1]
-        except KeyError:
-            passed = 0
-        total = failed + passed
-        percentage_failed = round((failed / total) * 100)
-        percentage_passed = round((passed / total) * 100)
-        account_health = (score_percentage / 2.5) + (percentage_passed / 1.5)
-        return account_health, 'Incomplete Audits: {}%'.format(percentage_failed), 'Complete Audits: {}%'.format(
-            percentage_passed), 'Avg Audit Score: {}%'.format(score_percentage), 'Total Audits: {}'.format(total)
-
-    @app.callback([
+        Output('total-audits', 'children'),
         Output('total-failed', 'style'),
         Output('total-passed', 'style'),
         Output('avg-score', 'style'),
@@ -125,8 +103,14 @@ def register_callbacks(app):
         except KeyError:
             passed = 0
         total = failed + passed
-        percentage_failed = round((failed / total) * 100)
-        percentage_passed = round((passed / total) * 100)
+
+        try:
+            percentage_failed = round((failed / total) * 100)
+            percentage_passed = round((passed / total) * 100)
+        except ZeroDivisionError:
+            percentage_failed = 0
+            percentage_passed = 0
+
         total_style = {'margin': '10px auto', 'padding': '15px 0', }
         failed_style = {'margin': '10px auto', 'padding': '15px 0', }
         avg_style = {'margin': '10px auto', 'padding': '15px 0', }
@@ -151,7 +135,11 @@ def register_callbacks(app):
         else:
             total_style['background-color'] = 'rgba(133, 255, 0, 0.25)'  # green
 
-        return failed_style, failed_style, avg_style, total_style
+        account_health = (score_percentage / 2.5) + (percentage_passed / 1.5)
+        return account_health, 'Incomplete Audits: {}%'.format(percentage_failed), 'Complete Audits: {}%'.format(
+            percentage_passed), 'Avg Audit Score: {}%'.format(score_percentage), 'Total Audits: {}'.format(
+            total), failed_style, failed_style, avg_style, total_style
+
 
     @app.callback(
         Output('score-graph', 'figure'),
