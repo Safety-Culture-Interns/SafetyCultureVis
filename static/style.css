@@ -87,7 +87,7 @@ input:focus {
 }
 
 body {
-    margin: 5%;
+    margin: 0 5% 5% 5%;
     background-color: #f2f2f2;
     font-family: "Open Sans", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
@@ -241,11 +241,6 @@ input[type=submit] {
     margin-right: 3.5%;
 }
 
-body {
-    background-color: #f2f2f2;
-    margin: 5%;
-}
-
 .two.columns {
     width: 16.25%;
 }
@@ -397,4 +392,37 @@ td.CalendarDay {
 
 .modebar-container {
     display: none !important;
+}
+
+.pretty_container_color {
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    margin: 10px;
+    padding: 15px;
+    position: relative;
+}
+
+.DateInput {
+    border-radius: 6px;
+}
+
+.DateRangePickerInput__withBorder {
+    border-radius: 6px;
+    border: 0;
+}
+
+.DateRangePickerInput {
+    background-color: transparent;
+    display: inline-block;
+}
+
+.map-title {
+    text-align: center;
+    margin: 0 auto;
+    padding-bottom: 15px;
+}
+
+.health-score {
+    margin-bottom: 60px;
+    margin-top: -70px;
 }

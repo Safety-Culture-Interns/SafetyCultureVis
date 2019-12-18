@@ -41,7 +41,7 @@ def register_dashapps(app):
                          assets_folder=os.getcwd()+'/static/',
                          meta_tags=[meta_viewport])
     with app.app_context():
-        dashapp1.title = "Dashapp 1"
+        dashapp1.title = "SafetyCulture Dashboard"
         dashapp1.layout = layout
         register_callbacks(dashapp1)
         _protect_dashviews(dashapp1)
