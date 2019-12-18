@@ -33,17 +33,13 @@ location_map = html.Div([
                 id='date-picker-range',
                 start_date=previous_date.date(),
                 end_date=current_date.date(),
+                max_date_allowed=current_date.date() + datetime.timedelta(1),
+                updatemode='bothdates'
             )], className='pretty_container',
             style={'width': '50%', 'text-align': 'center'}),
-        html.Div(children=[
-            dcc.Dropdown(options=[
-                {'label': 'Audit Created', 'value': 'Created_at'},
-                {'label': 'Audit Modified', 'value': 'Modified_at'},
-                {'label': 'Date Completed', 'value': 'completed_at'}
-            ], value='Created_at',
-                id='date-sort')],
-            className='pretty_container',
-            style={'width': '50%'}),
+        html.Div(children=[],
+                 className='pretty_container',
+                 style={'width': '50%'}),
     ], style={'display': 'flex'}),
     html.Div([
         dcc.Graph(
