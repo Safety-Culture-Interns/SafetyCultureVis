@@ -715,3 +715,7 @@ there.
     font-size: 2rem !important;
     margin-bottom: 8px;
 }
+
+.modebar-container {
+    display: none !important;
+}

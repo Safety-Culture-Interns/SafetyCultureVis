@@ -1,3 +1,5 @@
+from collections import OrderedDict
+
 import requests
 
 from flaskr import db
@@ -21,22 +23,51 @@ class API:
     # syncs the mongodb with the api, adding only the new audits
     def sync_with_api(self):
         mongo_audit_ids = self.MongoDB.get_all('audit_id')
-        mongo_audit_dates = self.MongoDB.get_all('modified_at')
         api_audits = self.get_api_audit_ids_mod_dates()[0]
         api_audit_dates = self.get_api_audit_ids_mod_dates()[1]
-        new_ids = self.compare_api_database(mongo_audit_ids, api_audits)
+        self.delete_from_mongo(mongo_audit_ids, api_audits)
+        mongo_audit_ids = self.MongoDB.get_all('audit_id')
+        mongo_audit_dates = self.MongoDB.get_all('modified_at')
+        mongo_zipped = list(map(list, zip(mongo_audit_ids, mongo_audit_dates)))
+        api_zipped = list(map(list, zip(api_audits, api_audit_dates)))
+        new_ids = self.compare_api_database(mongo_zipped, api_zipped)
         yield self.write_audits_to_db(new_ids)
 
     # loops through the ids from the api, and removes any from list if they are also in the mongo ids
-    def compare_api_database(self, mongo_ids, api_ids):
-        new_entries = []
-        for audit_id in api_ids:
-            if audit_id in mongo_ids:  # TODO: also check modification date
-                continue
+    def compare_api_database(self, mongo_zipped, api_zipped):
+        def filter_duplicate(item):
+            if item in ll:
+                return False
             else:
-                new_entries.append(audit_id)
-        print("{} items are going to be added to the database".format(len(new_entries)))
-        return new_entries
+                return True
+
+        ll = api_zipped
+        out_filter = list(filter(filter_duplicate, mongo_zipped))
+        ll = mongo_zipped
+        out_filter += list(filter(filter_duplicate, api_zipped))
+        try:
+            audit_ids, audit_dates = zip(*out_filter)
+            audits_to_add = list(OrderedDict.fromkeys(audit_ids))
+            audits_to_delete = self.get_duplicates(audit_ids)
+            print("audits to add {}".format(audits_to_add))
+            print("audits to delete {}".format(audits_to_delete))
+            for audit in audits_to_delete:
+                self.MongoDB.delete_audit(audit)
+            return audits_to_add
+        except ValueError:
+            print('Database and api are the same')
+            return []
+
+    def get_duplicates(self, audit_ids):
+        duplicates = list(set([item for item in audit_ids if audit_ids.count(item) > 1]))
+        return duplicates
+
+    # deletes audits from database that are not in api
+    def delete_from_mongo(self, mongo_ids, audit_ids):
+        audit_ids_to_delete = list(filter(lambda x: x not in audit_ids, mongo_ids))
+        for audit in audit_ids_to_delete:
+            print("deleting {}".format(audit))
+            self.MongoDB.delete_audit(audit)
 
     # returns a dict from the api
     def get_json(self, value):

@@ -18,7 +18,7 @@
 
 .login-screen {
     background-color: #FFF;
-    padding: 0 20px;
+    padding: 20px;
     border-radius: 5px
 }
 
@@ -393,4 +393,8 @@ td.CalendarDay {
 .loading-screen {
     padding: 20px;
     border-radius: 5px;
+}
+
+.modebar-container {
+    display: none !important;
 }

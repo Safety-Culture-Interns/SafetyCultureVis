@@ -18,7 +18,7 @@ header = html.Div([
                  style={'height': '60px', 'width': 'auto', 'margin-bottom': '25px'})
     ], className='one-third column'),
     html.Div([
-        html.H3('Safety Culture Dashboard'),
+        html.H3('SafetyCulture Dashboard'),
         html.H5('Your overview')
     ], className='one-half column', id='title'),
     html.Div([

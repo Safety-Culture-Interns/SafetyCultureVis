@@ -34,6 +34,9 @@ class Audits:
             return True
         return False
 
+    def delete_audit(self, audit_id):
+        self.db_collection.remove({'audit_id': audit_id})
+
     def get_all_from_db(self, audit_id):
         document = self.db_collection.find_one({'audit_id': audit_id})
         return document
