@@ -89,7 +89,7 @@ def register_callbacks(app):
         [Input('date-picker-range', 'start_date'),
          Input('date-picker-range', 'end_date')])
     def update_output(start_date, end_date):
-        data = aggregate_pipelines.get_failed_report_dataframe(session['user_id'], start_date, end_date)
+        data = aggregate_pipelines.get_completed_report_dataframe(session['user_id'], start_date, end_date)
         score_percentage = round(
             aggregate_pipelines.get_average_score_percentage(session['user_id'], start_date, end_date))
         try:
@@ -144,7 +144,7 @@ def register_callbacks(app):
          Input('date-picker-range', 'end_date')]
     )
     def update_graph(start_date, end_date):
-        df = aggregate_pipelines.get_stats_by_x_days(session['user_id'], start_date, end_date)
+        df = aggregate_pipelines.get_stats_by_date(session['user_id'], start_date, end_date)
         return {"data": [create_line(fill_data(df, start_date, end_date, 'avg_score')),
                          create_line(fill_data(df, start_date, end_date, 'avg_total_score'))],
                 "layout": go.Layout(title="Average Scores",
@@ -157,7 +157,7 @@ def register_callbacks(app):
          Input('date-picker-range', 'end_date')]
     )
     def update_graph(start_date, end_date):
-        df = aggregate_pipelines.get_stats_by_x_days(session['user_id'], start_date, end_date)
+        df = aggregate_pipelines.get_stats_by_date(session['user_id'], start_date, end_date)
         return {"data": [create_line(fill_data(df, start_date, end_date, 'avg_score_percentage'))],
                 "layout": go.Layout(title="Average Score Percentage",
                                     hovermode='closest',
@@ -169,9 +169,9 @@ def register_callbacks(app):
          Input('date-picker-range', 'end_date')]
     )
     def update_graph(start_date, end_date):
-        df = aggregate_pipelines.get_stats_by_x_days(session['user_id'], start_date, end_date)
+        df = aggregate_pipelines.get_stats_by_date(session['user_id'], start_date, end_date)
         return {"data": [create_line(fill_data(df, start_date, end_date, 'avg_duration'))],
-                "layout": go.Layout(title="Average Audit Duration",
+                "layout": go.Layout(title="Average Audit Duration (Seconds)",
                                     hovermode='closest'
                                     )}
 
@@ -181,9 +181,9 @@ def register_callbacks(app):
          Input('date-picker-range', 'end_date')]
     )
     def update_graph(start_date, end_date):
-        df = aggregate_pipelines.get_stats_by_x_days(session['user_id'], start_date, end_date)
+        df = aggregate_pipelines.get_stats_by_date(session['user_id'], start_date, end_date)
         return {"data": [create_line(fill_data(df, start_date, end_date, 'audits')),
-                         create_line(fill_data(df, start_date, end_date, 'failed_audits'))],
-                "layout": go.Layout(title="Total vs Failed Audits",
+                         create_line(fill_data(df, start_date, end_date, 'incomplete_audits'))],
+                "layout": go.Layout(title="Total vs Incomplete Audits",
                                     hovermode='closest'
                                     )}
