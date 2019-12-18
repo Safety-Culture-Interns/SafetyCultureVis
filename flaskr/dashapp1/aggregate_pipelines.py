@@ -70,8 +70,12 @@ def get_stats_by_x_days(username, start_date, end_date):
 
     ]
 
-    # use the pipeline to make a list from the aggregate cursor, then convert to a dataframe
-    return pd.io.json.json_normalize(list(db_collection.aggregate(pipeline)))
+    df = pd.io.json.json_normalize(list(db_collection.aggregate(pipeline)))
+    if df.empty:
+        data = {'date': [], 'audits': [], 'failed_audits': [], 'completed_audits': [], 'avg_score': [],
+                'avg_total_score': [], 'avg_score_percentage': [], 'avg_duration': [], 'percent_completed': []}
+        df = pd.DataFrame(data)
+    return df
 
 
 def get_average_score_percentage(username, start_date, end_date):
@@ -201,12 +205,14 @@ def get_map_dataframe(username, start_date, end_date):
                          'Y': {'$arrayElemAt': ['$location.responses.location.geometry.coordinates', 1]}}
         }
     ]
-
-    # use the pipeline to make a list from the aggregate cursor, then convert to a dataframe
-    return pd.io.json.json_normalize(list(db_collection.aggregate(pipeline)))
+    df = pd.io.json.json_normalize(list(db_collection.aggregate(pipeline)))
+    if df.empty:
+        data = {'Created_at': [], 'Modified_at': [], 'Score': [], 'X': [], 'Y': [], 'completed_at': []}
+        df = pd.DataFrame(data)
+    return df
 
     # test print result
 #
 with pd.option_context('display.max_rows', None, 'display.max_columns', None):  # more options can be specified also
-    print(get_map_dataframe('matthew', '2018-08-08', '2018-08-08'))
+    print(get_stats_by_x_days('matthew', '2018-08-08', '2018-08-08'))
 
