@@ -213,6 +213,6 @@ def get_map_dataframe(username, start_date, end_date):
 
     # test print result
 #
-with pd.option_context('display.max_rows', None, 'display.max_columns', None):  # more options can be specified also
-    print(get_stats_by_x_days('matthew', '2018-08-08', '2018-08-08'))
+# with pd.option_context('display.max_rows', None, 'display.max_columns', None):  # more options can be specified also
+#     print(get_stats_by_x_days('matthew', '2018-08-08', '2018-08-08'))
 
