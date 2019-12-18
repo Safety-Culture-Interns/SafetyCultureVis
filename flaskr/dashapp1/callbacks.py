@@ -77,6 +77,8 @@ def register_callbacks(app):
 
     # callback from the Guage
     @app.callback([
+        Output('health_score', 'children'),
+        Output('health_score', 'style'),
         Output('my-gauge', 'value'),
         Output('total-failed', 'children'),
         Output('total-passed', 'children'),
@@ -108,9 +110,10 @@ def register_callbacks(app):
         else:
             percentage_failed = 0
             percentage_passed = 0
-
+        account_health = (score_percentage / 2.5) + (percentage_passed / 1.5)
         total_style = {'margin': '10px auto', 'padding': '15px 0', }
         failed_style = {'margin': '10px auto', 'padding': '15px 0', }
+        health_style = {'color': 'rgba(255, 0, 0, 0.18)'}
         avg_style = {'margin': '10px auto', 'padding': '15px 0', }
         if percentage_failed >= 50:
             failed_style['background-color'] = 'rgba(255, 0, 0, 0.18)'  # red
@@ -132,9 +135,17 @@ def register_callbacks(app):
             total_style['background-color'] = 'rgba(255, 0, 0, 0.18)'  # red
         else:
             total_style['background-color'] = 'rgba(133, 255, 0, 0.25)'  # green
+        if account_health <= 50:
+            health_style = {'color': 'rgba(255, 0, 0, 1)'}
+        elif account_health <= 70:
+            health_style = {'color': 'rgba(255, 153, 0, 1)'}
+        elif account_health <= 80:
+            health_style = {'color': 'rgba(255, 247, 0, 1)'}
+        else:
+            health_style = {'color': 'rgba(133, 255, 0, 1)'}
 
-        account_health = (score_percentage / 2.5) + (percentage_passed / 1.5)
-        return account_health, 'Incomplete Audits: {}%'.format(percentage_failed), 'Complete Audits: {}%'.format(
+        return "{}%".format(round(account_health)), health_style, account_health, 'Incomplete Audits: {}%'.format(
+            percentage_failed), 'Complete Audits: {}%'.format(
             percentage_passed), 'Avg Audit Score: {}%'.format(score_percentage), 'Total Audits: {}'.format(
             total), failed_style, failed_style, avg_style, total_style
 

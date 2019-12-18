@@ -1,13 +1,7 @@
 import dash_html_components as html
-import dash_bootstrap_components as dbc
 import dash_core_components as dcc
 import dash_daq as daq
 import datetime
-import plotly.graph_objects as go
-
-from flask import session
-
-from . import aggregate_pipelines
 
 current_date = datetime.datetime.now()
 previous_date = current_date + datetime.timedelta(-29)
@@ -19,29 +13,24 @@ header = html.Div([
     ], className='one-third column'),
     html.Div([
         html.H3('SafetyCulture Dashboard'),
-        html.H5('Your overview')
-    ], className='one-half column', id='title'),
-    html.Div([
-        html.A('Logout', href='/auth/logout', className='logout_button')
-    ], className='one-third column', style={'text-align': 'right'}),
-], className='flex-display', id='header', style={'margin-bottom': '25px'})
-# location map and drop downs
-location_map = html.Div([
-    html.Div([
+        html.H5('Your overview from'),
         html.Div(children=[
             dcc.DatePickerRange(
                 id='date-picker-range',
                 start_date=previous_date.date(),
                 end_date=current_date.date(),
                 max_date_allowed=current_date.date() + datetime.timedelta(1),
-                updatemode='bothdates'
-            )], className='pretty_container',
-            style={'width': '50%', 'text-align': 'center'}),
-        html.Div(children=[],
-                 className='pretty_container',
-                 style={'width': '50%'}),
-    ], style={'display': 'flex'}),
+            )],
+        )
+    ], className='one-half column', id='title'),
     html.Div([
+        html.A('Logout', href='/auth/logout', className='logout_button'),
+    ], className='one-third column', style={'text-align': 'right'}),
+], className='flex-display', id='header', style={'margin-bottom': '25px'})
+# location map and drop downs
+location_map = html.Div([
+    html.Div([
+        html.H5("Audit Locations", className='map-title', style={'font-size': '2rem'}),
         dcc.Graph(
             id='map',
             style={'width': '100%'},
@@ -66,28 +55,27 @@ score_gauge = html.Div([
     daq.Gauge(
         id='my-gauge',
         value=0,
-        showCurrentValue=True,
-        units="%",
         color={"gradient": True, "ranges": {"red": [0, 60], "yellow": [60, 80], "green": [80, 100]}},
         label='Account Health',
         max=100,
         min=0,
         style={'color': 'black', 'font-size': '2rem'}
     ),
+    html.H5("0%", id="health_score", className='health-score'),
     html.Div([
         html.Img(src='/dashboard/assets/Feeling-barometer.png',
                  style={'height': '40px', 'width': 'auto', })
     ], className='happyness'),
     html.Div([
-        html.H6("Incomplete Audits: 0%", id='total-failed', className='pretty_container five columns',
+        html.H6("Incomplete Audits: 0%", id='total-failed', className='pretty_container_color five columns',
                 style={'margin': '10px auto', 'padding': '15px 0'}
                 ),
-        html.H6('Complete Audits: 0%', id='total-passed', className='pretty_container five columns',
+        html.H6('Complete Audits: 0%', id='total-passed', className='pretty_container_color five columns',
                 style={'margin': '10px auto', 'padding': '15px 0'}),
-        html.H6("Avg Audit Score: 0%", id='avg-score', className='pretty_container five columns',
+        html.H6("Avg Audit Score: 0%", id='avg-score', className='pretty_container_color five columns',
                 style={'margin': '10px auto', 'padding': '15px 0'},
                 ),
-        html.H6('Total Audits: 0', id='total-audits', className='pretty_container five columns',
+        html.H6('Total Audits: 0', id='total-audits', className='pretty_container_color five columns',
                 style={'margin': '10px auto', 'padding': '15px 0'})
     ], className='inside_pretty_container')
 ], id='score_guage', className='pretty_container four columns')
