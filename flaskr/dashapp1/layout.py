@@ -98,19 +98,23 @@ score_gauge = html.Div([
 
 # combining into divs
 score_graph = html.Div([
-    dcc.Graph(id='score-graph')
+    dcc.Graph(id='score-graph',
+              config={'displayModeBar': False})
 ], className='pretty_container six columns')
 
 score_percent_graph = html.Div([
-    dcc.Graph(id='score-percent-graph')
+    dcc.Graph(id='score-percent-graph',
+              config={'displayModeBar': False})
 ], className='pretty_container six columns')
 
 duration_graph = html.Div([
-    dcc.Graph(id='duration-graph')
+    dcc.Graph(id='duration-graph',
+              config={'displayModeBar': False})
 ], className='pretty_container six columns')
 
 audits_graph = html.Div([
-    dcc.Graph(id='audits-graph')
+    dcc.Graph(id='audits-graph',
+              config={'displayModeBar': False})
 ], className='pretty_container six columns')
 # average audit duration and total vs failed audits
 audit_duration_failed_audits = html.Div([

@@ -102,10 +102,10 @@ def register_callbacks(app):
             passed = 0
         total = failed + passed
 
-        try:
+        if failed and passed is not None:
             percentage_failed = round((failed / total) * 100)
             percentage_passed = round((passed / total) * 100)
-        except ZeroDivisionError:
+        else:
             percentage_failed = 0
             percentage_passed = 0
 
@@ -138,7 +138,6 @@ def register_callbacks(app):
             percentage_passed), 'Avg Audit Score: {}%'.format(score_percentage), 'Total Audits: {}'.format(
             total), failed_style, failed_style, avg_style, total_style
 
-
     @app.callback(
         Output('score-graph', 'figure'),
         [Input('date-picker-range', 'start_date'),
@@ -161,7 +160,7 @@ def register_callbacks(app):
         df = aggregate_pipelines.get_stats_by_x_days(session['user_id'], start_date, end_date)
         return {"data": [create_line(fill_data(df, start_date, end_date, 'avg_score_percentage'))],
                 "layout": go.Layout(title="Average Score Percentage",
-                                    hovermode='closest'
+                                    hovermode='closest',
                                     )}
 
     @app.callback(
