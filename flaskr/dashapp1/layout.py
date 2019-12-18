@@ -33,17 +33,13 @@ location_map = html.Div([
                 id='date-picker-range',
                 start_date=previous_date.date(),
                 end_date=current_date.date(),
+                max_date_allowed=current_date.date() + datetime.timedelta(1),
+                updatemode='bothdates'
             )], className='pretty_container',
             style={'width': '50%', 'text-align': 'center'}),
-        html.Div(children=[
-            dcc.Dropdown(options=[
-                {'label': 'Audit Created', 'value': 'Created_at'},
-                {'label': 'Audit Modified', 'value': 'Modified_at'},
-                {'label': 'Date Completed', 'value': 'completed_at'}
-            ], value='Created_at',
-                id='date-sort')],
-            className='pretty_container',
-            style={'width': '50%'}),
+        html.Div(children=[],
+                 className='pretty_container',
+                 style={'width': '50%'}),
     ], style={'display': 'flex'}),
     html.Div([
         dcc.Graph(
@@ -98,19 +94,23 @@ score_gauge = html.Div([
 
 # combining into divs
 score_graph = html.Div([
-    dcc.Graph(id='score-graph')
+    dcc.Graph(id='score-graph',
+              config={'displayModeBar': False})
 ], className='pretty_container six columns')
 
 score_percent_graph = html.Div([
-    dcc.Graph(id='score-percent-graph')
+    dcc.Graph(id='score-percent-graph',
+              config={'displayModeBar': False})
 ], className='pretty_container six columns')
 
 duration_graph = html.Div([
-    dcc.Graph(id='duration-graph')
+    dcc.Graph(id='duration-graph',
+              config={'displayModeBar': False})
 ], className='pretty_container six columns')
 
 audits_graph = html.Div([
-    dcc.Graph(id='audits-graph')
+    dcc.Graph(id='audits-graph',
+              config={'displayModeBar': False})
 ], className='pretty_container six columns')
 # average audit duration and total vs failed audits
 audit_duration_failed_audits = html.Div([

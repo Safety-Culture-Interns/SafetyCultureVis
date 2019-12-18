@@ -70,8 +70,12 @@ def get_stats_by_x_days(username, start_date, end_date):
 
     ]
 
-    # use the pipeline to make a list from the aggregate cursor, then convert to a dataframe
-    return pd.io.json.json_normalize(list(db_collection.aggregate(pipeline)))
+    df = pd.io.json.json_normalize(list(db_collection.aggregate(pipeline)))
+    if df.empty:
+        data = {'date': [], 'audits': [], 'failed_audits': [], 'completed_audits': [], 'avg_score': [],
+                'avg_total_score': [], 'avg_score_percentage': [], 'avg_duration': [], 'percent_completed': []}
+        df = pd.DataFrame(data)
+    return df
 
 
 def get_average_score_percentage(username, start_date, end_date):
@@ -150,16 +154,27 @@ def get_failed_report_dataframe(username, start_date, end_date):
         }
     ]
 
-    # use the pipeline to make a list from the aggregate cursor, then convert to a dataframe
-    return pd.io.json.json_normalize(list(db_collection.aggregate(pipeline)))
+    df = pd.io.json.json_normalize(list(db_collection.aggregate(pipeline)))
+    if df.empty:
+        data = {'_id': ['failed', 'completed'], 'count': [0, 0]}
+        df = pd.DataFrame(data)
+    if not (df['_id'] == 'failed').any():
+        new_row = pd.DataFrame({'_id': 'failed', 'count': 0}, index=[0])
+        df = pd.concat([new_row, df]).reset_index(drop=True)
+    if not (df['_id'] == 'completed').any():
+        df = df.append({'_id': 'completed', 'count': 0}, ignore_index=True)
+
+    return df
 
 
-def get_map_dataframe(username):
+def get_map_dataframe(username, start_date, end_date):
     """ Returns a dataframe with the dates created at, modified at, completed at, score percentage, x and y coordinates
-    that have a point location
+    that have a point location and is within the given date range
     """
 
     db_collection = db.Audits().get_collection(username)
+    start_datetime = datetime.datetime(int(start_date[0:4]), int(start_date[5:7]), int(start_date[8:10]))
+    end_datetime = datetime.datetime(int(end_date[0:4]), int(end_date[5:7]), int(end_date[8:10]))
     pipeline = [
         {
             '$project': {
@@ -172,11 +187,15 @@ def get_map_dataframe(username):
                     {'$filter': {'input': "$header_items", 'as': "item",
                                  'cond': {'$eq': ["$$item.label", "Location"]}}},
                     0]},
+                'within_start_date': {'$gte': [{'$dateFromString': {'dateString': '$modified_at'}}, start_datetime]},
+                'within_end_date': {'$lte': [{'$dateFromString': {'dateString': '$modified_at'}}, end_datetime]}
             }
         },
         {
             '$match': {
-                'location.responses.location.geometry.type': 'Point'
+                'location.responses.location.geometry.type': 'Point',
+                'within_start_date': True,
+                'within_end_date': True
             }
         },
         {
@@ -186,12 +205,14 @@ def get_map_dataframe(username):
                          'Y': {'$arrayElemAt': ['$location.responses.location.geometry.coordinates', 1]}}
         }
     ]
-
-    # use the pipeline to make a list from the aggregate cursor, then convert to a dataframe
-    return pd.io.json.json_normalize(list(db_collection.aggregate(pipeline)))
+    df = pd.io.json.json_normalize(list(db_collection.aggregate(pipeline)))
+    if df.empty:
+        data = {'Created_at': [], 'Modified_at': [], 'Score': [], 'X': [], 'Y': [], 'completed_at': []}
+        df = pd.DataFrame(data)
+    return df
 
     # test print result
 #
 # with pd.option_context('display.max_rows', None, 'display.max_columns', None):  # more options can be specified also
-#     print(get_map_dataframe('matthew'))
+#     print(get_stats_by_x_days('matthew', '2018-08-08', '2018-08-08'))
 
