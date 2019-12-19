@@ -4,7 +4,7 @@ import pandas.io.json
 import datetime
 
 
-def get_stats_by_x_days(username, start_date, end_date):
+def get_stats_by_date(username, start_date, end_date):
     """ Returns a dataframe with the date, total audits, total uncompleted audits, total completed audits,
     average score, average total score, average score percentage, average duration and percent of audits completed
     in a given date range
@@ -21,7 +21,7 @@ def get_stats_by_x_days(username, start_date, end_date):
                 'total_score': '$audit_data.total_score',
                 'score_percentage': '$audit_data.score_percentage',
                 'duration': '$audit_data.duration',
-                'failed': {'$cond': [{'$eq': ['$audit_data.date_completed', None]}, 1, 0]},
+                'incomplete': {'$cond': [{'$eq': ['$audit_data.date_completed', None]}, 1, 0]},
                 'completed': {'$cond': [{'$eq': ['$audit_data.date_completed', None]}, 0, 1]},
                 'date': {'$substr': ["$modified_at", 0, 10]},
                 'within_start_date': {'$gte': [{'$dateFromString': {'dateString': '$modified_at'}}, start_datetime]},
@@ -39,7 +39,7 @@ def get_stats_by_x_days(username, start_date, end_date):
             '$group': {
                 '_id': '$date',
                 'audits': {'$sum': 1},
-                'failed_audits': {'$sum': '$failed'},
+                'incomplete_audits': {'$sum': '$incomplete'},
                 'completed_audits': {'$sum': '$completed'},
                 'avg_score': {'$avg': '$score'},
                 'avg_total_score': {'$avg': '$total_score'},
@@ -52,7 +52,7 @@ def get_stats_by_x_days(username, start_date, end_date):
                 '_id': 0,
                 'date': '$_id',
                 'audits': 1,
-                'failed_audits': 1,
+                'incomplete_audits': 1,
                 'completed_audits': 1,
                 'avg_score': 1,
                 'avg_total_score': 1,
@@ -72,7 +72,7 @@ def get_stats_by_x_days(username, start_date, end_date):
 
     df = pd.io.json.json_normalize(list(db_collection.aggregate(pipeline)))
     if df.empty:
-        data = {'date': [], 'audits': [], 'failed_audits': [], 'completed_audits': [], 'avg_score': [],
+        data = {'date': [], 'audits': [], 'incomplete_audits': [], 'completed_audits': [], 'avg_score': [],
                 'avg_total_score': [], 'avg_score_percentage': [], 'avg_duration': [], 'percent_completed': []}
         df = pd.DataFrame(data)
     return df
@@ -122,7 +122,7 @@ def get_average_score_percentage(username, start_date, end_date):
 
 
 # Returns
-def get_failed_report_dataframe(username, start_date, end_date):
+def get_completed_report_dataframe(username, start_date, end_date):
     """ Returns a dataframe with the count of the uncompleted audits within a date range
     """
     db_collection = db.Audits().get_collection(username)
@@ -132,7 +132,8 @@ def get_failed_report_dataframe(username, start_date, end_date):
         {
             '$project': {'_id': 0,
                          'array_values': {
-                             '$cond': [{'$eq': ['$audit_data.date_completed', None]}, 'failed', 'completed']},
+                             '$cond': [{'$eq': ['$audit_data.date_completed', None]}, 'incomplete_audits',
+                                       'completed']},
                          'within_start_date': {
                              '$gte': [{'$dateFromString': {'dateString': '$modified_at'}}, start_datetime]},
                          'within_end_date': {
@@ -156,10 +157,10 @@ def get_failed_report_dataframe(username, start_date, end_date):
 
     df = pd.io.json.json_normalize(list(db_collection.aggregate(pipeline)))
     if df.empty:
-        data = {'_id': ['failed', 'completed'], 'count': [0, 0]}
+        data = {'_id': ['incomplete_audits', 'completed'], 'count': [0, 0]}
         df = pd.DataFrame(data)
-    if not (df['_id'] == 'failed').any():
-        new_row = pd.DataFrame({'_id': 'failed', 'count': 0}, index=[0])
+    if not (df['_id'] == 'incomplete_audits').any():
+        new_row = pd.DataFrame({'_id': 'incomplete_audits', 'count': 0}, index=[0])
         df = pd.concat([new_row, df]).reset_index(drop=True)
     if not (df['_id'] == 'completed').any():
         df = df.append({'_id': 'completed', 'count': 0}, ignore_index=True)
@@ -215,4 +216,3 @@ def get_map_dataframe(username, start_date, end_date):
 #
 # with pd.option_context('display.max_rows', None, 'display.max_columns', None):  # more options can be specified also
 #     print(get_stats_by_x_days('matthew', '2018-08-08', '2018-08-08'))
-
