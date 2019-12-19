@@ -22,10 +22,14 @@ Very early stages of development. no versions or releases
 - dash html
  
 ## Screenshots
-
+The main dashboard once logged into an account
+![Dashboard](static/dashboard.PNG?raw=true "Optional Title")
+The login page
+![Login page](static/login.PNG?raw=true "Optional Title")
 
 ## Tech/framework used
 <b>Built with</b>
+- [Flask](https://www.fullstackpython.com/flask.html)
 - [Pycharm](https://www.jetbrains.com/pycharm/)
 - [AWS](https://aws.amazon.com/getting-started/tutorials/launch-an-app/)
 - [Dash](https://dash.plot.ly/)
@@ -36,6 +40,7 @@ Very early stages of development. no versions or releases
 - [Postman](https://www.getpostman.com/)
 - [Trello](https://trello.com/)
 - [Slack](https://slack.com/intl/en-au/)
+- [PyCharm](https://www.jetbrains.com/pycharm/)
 
 
 ## Features
@@ -45,25 +50,64 @@ Very early stages of development. no versions or releases
 - will display other graphs and charts with relevant data, that can be personalised (under development)
 
 ## Code Example
-One of the first things that needs to be done is making requests to the Safety Culture API, done like so...
+We have our code properly layered, to where all that is in the main application is this
 ```ruby
-URL = "https://sandpit-api.safetyculture.io"  
-HEADER = {'Authorization': 'Bearer *"this would be your access token"*'}
-value == "audits" or value == "templates":  
-request = requests.get(url="{}/{}/search".format(URL, value), headers=HEADER)
+from flaskr import create_app
+
+application = create_app()
+
+if __name__ == "__main__":
+    application.run()
 ```
-More to come
+We have 1 dash application, that has multiple layouts that it builds into one dashboard
+```ruby
+layout = html.Div([
+    header, map_health_bar, average_scores_percentages, audit_duration_failed_audits
+])
+```
+We use aggregate functions to get specific information from our database, like so.
+```ruby
+pipeline = [
+        {
+            '$project': {
+                'score_percentage': "$audit_data.score_percentage",
+                'within_start_date': {'$gte': [{'$dateFromString': {'dateString': '$modified_at'}}, start_datetime]},
+                'within_end_date': {'$lte': [{'$dateFromString': {'dateString': '$modified_at'}}, end_datetime]}
+            }
+
+        },
+        {
+            '$match': {
+                'within_start_date': True,
+                'within_end_date': True
+            }
+        },
+        {
+            "$group": {
+                '_id': None,
+                'avg_score_percentage': {
+                    '$avg': "$score_percentage"
+                }
+            }
+        },
+        {
+            '$project': {
+                '_id': 0,
+                'avg_score_percentage': 1
+            }
+
+        }
+    ]
+```
 ## Installation
-still in development
-
-## API Reference
-still in development
-
-## Tests
-still in development
+pip install (all of the packages in the requirements.txt)
+Then you are ready to run
 
 ## How to use?
-still in development
+Once packages have been installed, run from application.py.
+This will open a new local server for you to open in your browser.
+If running on something like AWS ( elastic beanstalk ), it will automatically recognise which folder to run.
+create an account and use an API token from iAuditor API, referenced above.
 
 ## Credits
 [Matthew Lewandowski](https://www.linkedin.com/in/matthew-lewandowski93/)  

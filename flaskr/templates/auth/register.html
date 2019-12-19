@@ -1,6 +1,6 @@
-{% extends "layout.html" %}
+{% extends 'base.html' %}
 {% block content %}
-<form action="/signup" method="POST">
+<form method="post">
     <div class="login">
         <div class="login-screen">
             <div class="app-title">
@@ -12,7 +12,7 @@
           request.form.username }}" placeholder="Username" name="username">
                     <label class="login-field-icon fui-user" for="username"></label></div>
                 <div class="control-group">
-                    <input type="text" class="login-field" value="{{
+                    <input type="password" class="login-field" value="{{
           request.form.password }}" placeholder="Password" name="password">
                     <label class="login-field-icon fui-user" for="api-token"></label></div>
                 <div class="control-group">
@@ -24,12 +24,6 @@
             {% if error %}
             <p class="error"><strong>Error:</strong> {{ error }}
                 {% endif %}
-        </div>
-    </div>
-    <div class="progress" style="width: 50%; margin-left: 25%;">
-        <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0"
-             aria-valuemin="0" aria-valuemax="100" style="width: 0%">
-            <span class="progress-bar-label">0%</span>
         </div>
     </div>
 </form>

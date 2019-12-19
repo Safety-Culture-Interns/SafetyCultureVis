@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block content %}
+<form method="post">
+    <div class="login">
+        <div class="login-screen">
+            <div class="app-title">
+                <h1>Please enter a new API Token</h1>
+            </div>
+            <div class="login-form">
+                <div class="control-group">
+                    <input type="text" class="login-field" value="{{
+          request.form.api }}" placeholder="API Token" name="api">
+                    <label class="login-field-icon fui-user" for="api"></label></div>
+            </div>
+            {% if error %}
+            <p class="error"><strong>Error:</strong> {{ error }}
+                {% endif %}
+        </div>
+    </div>
+</form>
+{% endblock %}
