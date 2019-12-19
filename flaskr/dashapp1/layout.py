@@ -117,6 +117,5 @@ map_health_bar = html.Div([
 
 # main layout
 layout = html.Div([
-
     header, map_health_bar, average_scores_percentages, audit_duration_failed_audits
 ], id='mainContainer', style={'display': 'flex', 'flex-wrap': 'wrap', 'width': '100%', 'height': '100%'})
